@@ -73,8 +73,9 @@ function listSubscription(_, res) {
     sum = {}
   for (let subscriptionId in subscriptions)
     ids.push(subscriptionId)
-  sum[subscriptions.length] = ids
-  res.send(sum)
+  sum[Object.keys(subscriptions).length] = ids
+  console.log(sum)
+  res.send(sum);
 }
 
 module.exports = { handlePushNotificationSubscription, sendPushNotification, sendPushNotificationToAll, listSubscription };

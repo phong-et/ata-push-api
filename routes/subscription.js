@@ -6,8 +6,8 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
-router.post("/", subscriptionHandler.handlePushNotificationSubscription);
-router.get("/:id", subscriptionHandler.sendPushNotification);
+router.post("/create", subscriptionHandler.handlePushNotificationSubscription);
+router.get("/notify/:id", subscriptionHandler.sendPushNotification);
 router.get("/notify-all", subscriptionHandler.sendPushNotificationToAll);
 router.get("/list", subscriptionHandler.listSubscription);
 module.exports = router;
