@@ -9,4 +9,5 @@ router.get('/', function(req, res, next) {
 router.post("/", subscriptionHandler.handlePushNotificationSubscription);
 router.get("/:id", subscriptionHandler.sendPushNotification);
 router.get("/notify-all", subscriptionHandler.sendPushNotificationToAll);
+router.get("/list", subscriptionHandler.listSubscription);
 module.exports = router;

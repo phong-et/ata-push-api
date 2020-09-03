@@ -68,4 +68,13 @@ async function sendPushNotificationToAll(req, res) {
   res.status(202).json({});
 }
 
-module.exports = { handlePushNotificationSubscription, sendPushNotification, sendPushNotificationToAll };
+function listSubscription(_, res) {
+  let ids = [],
+    sum = {}
+  for (let subscriptionId in subscriptions)
+    ids.push(subscriptionId)
+  sum[subscriptions.length] = ids
+  res.send(sum)
+}
+
+module.exports = { handlePushNotificationSubscription, sendPushNotification, sendPushNotificationToAll, listSubscription };
