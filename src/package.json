@@ -1,16 +1,11 @@
 {
   "name": "ata-push-api",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node server"
   },
   "dependencies": {
-    "cookie-parser": "^1.4.4",
-    "debug": "^2.6.9",
-    "http-errors": "^1.6.3",
-    "morgan": "^1.9.1",
-    "pug": "^3.0.0",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
