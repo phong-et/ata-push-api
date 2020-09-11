@@ -82,7 +82,7 @@ function listSubscription(_, res) {
 }
 
 function isExistedSubscriptionId(req, res) {
-  res.send({ isExistedSubscriptionId: subscriptions[req.params.id] ? true : false })
+  res.send({ isExisted: subscriptions[req.params.id] ? true : false })
 }
 
 module.exports = { handlePushNotificationSubscription, sendPushNotification, sendPushNotificationToAll, listSubscription, isExistedSubscriptionId };
