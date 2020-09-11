@@ -1,13 +1,14 @@
-const subscriptions = {};
-var crypto = require("crypto");
-const webpush = require("web-push");
+const subscriptions = {},
+  webpush = require("web-push"),
+  log = console.log,
+  crypto = require("crypto")
 
 const vapidKeys = {
   privateKey: "bdSiNzUhUP6piAxLH-tW88zfBlWWveIx0dAsDO66aVU",
   publicKey: "BIN2Jc5Vmkmy-S3AUrcMlpKxJpLeVRAfu9WBqUbJ70SJOCWGCGXKY-Xzyh7HDr6KbRDGYHjqZ06OcS3BjD7uAm8"
 };
 
-webpush.setVapidDetails("mailto:example@yourdomain.org", vapidKeys.publicKey, vapidKeys.privateKey);
+webpush.setVapidDetails("mailto:phillip7.et@gmail.com", vapidKeys.publicKey, vapidKeys.privateKey);
 
 function createHash(input) {
   const md5sum = crypto.createHash("md5");
@@ -30,9 +31,9 @@ function sendPushNotification(req, res) {
     .sendNotification(
       pushSubscription,
       JSON.stringify({
-        title: "New Product Available ",
-        text: "HEY! Take a look at this brand new t-shirt!",
-        image: "/images/jason-leung-HM6TMmevbZQ-unsplash.jpg",
+        title: "HAVE YOU CHECKED IN YET ?",
+        text: '<a href="/new-product-jason-leung-HM6TMmevbZQ-unsplash.html">Please click here go to checkin pageM</a>',
+        image: "/images/check-in-banner.jpg",
         tag: "new-product",
         url: "/new-product-jason-leung-HM6TMmevbZQ-unsplash.html"
       })
@@ -47,11 +48,11 @@ function sendPushNotificationToOne(req, res, subscription) {
     .sendNotification(
       subscription,
       JSON.stringify({
-        title: "New Product Available ",
-        text: "HEY! Take a look at this brand new t-shirt!",
-        image: "/images/jason-leung-HM6TMmevbZQ-unsplash.jpg",
-        tag: "new-product",
-        url: "/new-product-jason-leung-HM6TMmevbZQ-unsplash.html"
+        title: "HAVE YOU CHECKED IN YET ?",
+        text: 'Please click here go to checkin page',
+        image: "/media/error/bg1.jpg",
+        tag: "check-in notification",
+        url: "/record-attendance"
       })
     )
     .catch(err => {
@@ -60,12 +61,14 @@ function sendPushNotificationToOne(req, res, subscription) {
   //res.status(202).json({})
 }
 async function sendPushNotificationToAll(req, res) {
-  console.log('subscriptions')
+  log('notify all subscriptions')
+  let notifiedSubscriptions = []
   for (let subscriptionId in subscriptions) {
-    console.log(subscriptions[subscriptionId])
+    log(subscriptions[subscriptionId])
     await sendPushNotificationToOne(req, res, subscriptions[subscriptionId])
+    notifiedSubscriptions.push(subscriptionId)
   }
-  res.status(202).json({});
+  res.status(202).json({ "notifiedSubscriptions": notifiedSubscriptions });
 }
 
 function listSubscription(_, res) {
@@ -74,8 +77,12 @@ function listSubscription(_, res) {
   for (let subscriptionId in subscriptions)
     ids.push(subscriptionId)
   sum[Object.keys(subscriptions).length] = ids
-  console.log(sum)
+  log(sum)
   res.send(sum);
 }
 
-module.exports = { handlePushNotificationSubscription, sendPushNotification, sendPushNotificationToAll, listSubscription };
+function isExistedSubscriptionId(req, res) {
+  res.send({ isExistedSubscriptionId: subscriptions[req.params.id] ? true : false })
+}
+
+module.exports = { handlePushNotificationSubscription, sendPushNotification, sendPushNotificationToAll, listSubscription, isExistedSubscriptionId };
