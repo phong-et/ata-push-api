@@ -21,7 +21,7 @@
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "paths": {
-    "/subscription": {
+    "/subscription/create": {
       "post": {
         "tags": ["Web Push Subscription"],
         "description": "Recevies a push subscription and save it in memory",
@@ -46,7 +46,7 @@
         }
       }
     },
-    "/subscription/{id}": {
+    "/subscription/notify/{id}": {
       "parameters": [
         {
           "name": "id",
@@ -59,6 +59,48 @@
       "get": {
         "tags": ["Web Push Subscription"],
         "summary": "Sends a push message to the existing push subscription",
+        "responses": {
+          "202": {
+            "description": "Message sent"
+          }
+        }
+      }
+    },
+    "/subscription/notify-all}": {
+      "get": {
+        "tags": ["Web Push Subscription"],
+        "summary": "Sends a push message to all existing push subscriptions",
+        "responses": {
+          "202": {
+            "description": "Message sent"
+          }
+        }
+      }
+    },
+    "/subscription/list": {
+      "get": {
+        "tags": ["Web Push Subscription"],
+        "summary": "List all existing push subscription ids",
+        "responses": {
+          "202": {
+            "description": "Message sent"
+          }
+        }
+      }
+    },
+    "/subscription/check/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "ID of the subscription that we want to find",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "tags": ["Web Push Subscription"],
+        "summary": "Check existing push subscription id",
         "responses": {
           "202": {
             "description": "Message sent"
