@@ -10,4 +10,5 @@ router.post("/create", subscriptionHandler.handlePushNotificationSubscription);
 router.get("/notify/:id", subscriptionHandler.sendPushNotification);
 router.get("/notify-all", subscriptionHandler.sendPushNotificationToAll);
 router.get("/list", subscriptionHandler.listSubscription);
+router.get("/check/:id", subscriptionHandler.isExistedSubscriptionId);
 module.exports = router;
