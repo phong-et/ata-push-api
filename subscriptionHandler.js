@@ -32,10 +32,10 @@ function sendPushNotification(req, res) {
       pushSubscription,
       JSON.stringify({
         title: "HAVE YOU CHECKED IN YET ?",
-        text: '<a href="/new-product-jason-leung-HM6TMmevbZQ-unsplash.html">Please click here go to checkin pageM</a>',
-        image: "/images/check-in-banner.jpg",
-        tag: "new-product",
-        url: "/new-product-jason-leung-HM6TMmevbZQ-unsplash.html"
+        text: 'Please click here go to checkin page',
+        image: "/media/error/bg1.jpg",
+        tag: "check-in notification",
+        url: "/record-attendance"
       })
     )
     .catch(err => {
@@ -43,7 +43,7 @@ function sendPushNotification(req, res) {
     });
   res.status(202).json({})
 }
-function sendPushNotificationToOne(req, res, subscription) {
+function sendPushNotificationToOne(subscription) {
   webpush
     .sendNotification(
       subscription,
@@ -58,14 +58,13 @@ function sendPushNotificationToOne(req, res, subscription) {
     .catch(err => {
       console.log(err);
     })
-  //res.status(202).json({})
 }
 async function sendPushNotificationToAll(req, res) {
   log('notify all subscriptions')
   let notifiedSubscriptions = []
   for (let subscriptionId in subscriptions) {
     log(subscriptions[subscriptionId])
-    await sendPushNotificationToOne(req, res, subscriptions[subscriptionId])
+    await sendPushNotificationToOne(subscriptions[subscriptionId])
     notifiedSubscriptions.push(subscriptionId)
   }
   res.status(202).json({ "notifiedSubscriptions": notifiedSubscriptions });
