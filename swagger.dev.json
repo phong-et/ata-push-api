@@ -9,7 +9,7 @@
       "url": "https://opensource.org/licenses/MIT"
     }
   },
-  "host": "ata-push-api.herokuapp.com/",
+  "host": "localhost:8888",
   "basePath": "",
   "tags": [
     {
@@ -17,7 +17,7 @@
       "description": "API for Web push subscription"
     }
   ],
-  "schemes": ["https"],
+  "schemes": ["http"],
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "paths": {

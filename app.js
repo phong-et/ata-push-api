@@ -8,12 +8,14 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var subscriptionRouter = require('./routes/subscription');
 
-const swaggerUi = require('swagger-ui-express')
-const swaggerDocument = require('./swagger.json');
-const bodyParser = require("body-parser");
-const cors = require("cors");
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
 var app = express();
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocumentFileName = app.get('env') === 'development' ? './swagger.dev.json' : './swagger.json';
+const swaggerDocument = require(swaggerDocumentFileName);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -26,21 +28,20 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors())
+app.use(cors());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/subscription', subscriptionRouter);
 
-
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -49,5 +50,4 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
 module.exports = app;
