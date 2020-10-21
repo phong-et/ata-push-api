@@ -15,12 +15,39 @@
     {
       "name": "Web Push Subscription",
       "description": "API for Web push subscription"
+    },
+    {
+      "name": "Notification Service",
+      "description": "API for Notification service"
     }
   ],
   "schemes": ["http"],
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "paths": {
+    "/notification/start": {
+      "post": {
+        "tags": ["Notification Service"],
+        "description": "Start Notification service when status is stop ",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Request sent and excuted successfully"
+          }
+        }
+      }
+    },
+    "/notification/status": {
+      "get": {
+        "tags": ["Notification Service"],
+        "summary": "Check status of notification service",
+        "responses": {
+          "200": {
+            "description": "Message sent"
+          }
+        }
+      }
+    },
     "/subscription/create": {
       "post": {
         "tags": ["Web Push Subscription"],

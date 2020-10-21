@@ -21,6 +21,8 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
+//var service = require('./notificationAttedanceService');
+
 /**
  * Listen on provided port, on all network interfaces.
  */
@@ -28,7 +30,6 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
-require('./service').run()
 
 /**
  * Normalize a port into a number, string, or false.
@@ -85,3 +86,9 @@ function onListening() {
   var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+(async () => {
+  var service = require('./notificationAttedanceService');
+  await service.run();
+  global.notificationServiceStatus = service.getServiceStatus();
+})();
+
