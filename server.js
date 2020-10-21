@@ -21,8 +21,6 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
-//var service = require('./notificationAttedanceService');
-
 /**
  * Listen on provided port, on all network interfaces.
  */
@@ -86,6 +84,8 @@ function onListening() {
   var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+// Inject services here
 (async () => {
   var service = require('./notificationAttedanceService');
   await service.run();
