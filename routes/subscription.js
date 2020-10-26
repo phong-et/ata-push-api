@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const subscriptionHandler = require('../subscriptionHandler');
+const subscriptionHandler = require('../handlers/subscriptionHandler');
 /* GET users listing. */
 router.get('/', function (req, res, next) {
   res.send('respond with a resource');

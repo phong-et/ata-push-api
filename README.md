@@ -13,6 +13,33 @@ npm install
 npm start
 ```
 
-## Descriptions
+## Tips
 
-- /notify-all
+- Broadcast all existed subscriptions with customized notification
+
+    ```js
+    let url =
+        hostPushAPI +
+        '/subscription/notify-all?' +
+        new URLSearchParams({
+            title: 'titile',
+            text: 'content',
+            image: 'path to bg img',
+            tag: 'tag',
+            url: 'url',
+        }),
+        options = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        };
+    fetch(url, options).then((response) => {
+        log(`${response.url}: ${response.status}(${response.statusText})`);
+    });
+    ```
+
+## Notes
+
+- Server restart
+  - Client must to browse page again to send subscription automaticly

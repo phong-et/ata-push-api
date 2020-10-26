@@ -17,8 +17,8 @@
       "description": "API for Web push subscription"
     },
     {
-      "name": "Notification Service",
-      "description": "API for Notification service"
+      "name": "Notification Attendance service",
+      "description": "API for Notification Attendance"
     }
   ],
   "schemes": ["http"],
@@ -27,20 +27,32 @@
   "paths": {
     "/notification/start": {
       "post": {
-        "tags": ["Notification Service"],
-        "description": "Start Notification service when status is stop ",
+        "tags": ["Notification Attendance service"],
+        "description": "Start Notification Attendance service",
         "produces": ["application/json"],
         "responses": {
-          "200": {
+          "201": {
             "description": "Request sent and excuted successfully"
           }
         }
       }
     },
-    "/notification/status": {
+    "/notification/stop": {
+      "put": {
+        "tags": ["Notification Attendance service"],
+        "description": "Stop Notification Attendance service",
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "Request sent and excuted successfully"
+          }
+        }
+      }
+    },
+    "/notification/infos": {
       "get": {
-        "tags": ["Notification Service"],
-        "summary": "Check status of notification service",
+        "tags": ["Notification Attendance service"],
+        "summary": "Check informations of Notification Attendance service",
         "responses": {
           "200": {
             "description": "Message sent"
