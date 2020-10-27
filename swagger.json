@@ -54,7 +54,7 @@
         "tags": ["Notification Attendance service"],
         "summary": "Check informations of Notification Attendance service",
         "responses": {
-          "200": {
+          "201": {
             "description": "Message sent"
           }
         }
