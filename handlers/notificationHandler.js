@@ -55,6 +55,7 @@ async function getInfos(_, res) {
       jobNotifyCheckinCount: info.jobNotifyCheckinCount,
       jobNotifyCheckoutCount: info.jobNotifyCheckoutCount,
       notifyTime: info.notifyTime,
+      errorMessage: info.errorMessage
     });
   } else
     res.send({
