@@ -20,7 +20,7 @@ let serviceStatus = 'initial',
   getJobNotifyCheckinCount = () => jobNotifyCheckinCount,
   getJobNotifyCheckoutCount = () => jobNotifyCheckoutCount,
   getNotifyTime = () => notifyTime,
-  geterrorMessage = () => errorMessage;
+  getErrorMessage = () => errorMessage;
 
 function notify(type) {
   let url =
@@ -100,6 +100,7 @@ module.exports = {
   getJobNotifyCheckinCount,
   getJobNotifyCheckoutCount,
   getNotifyTime,
+  getErrorMessage
 };
 (() => log(`> ${serviceName} service was injected`))();
 process.on('message', async (message) => {
@@ -117,7 +118,7 @@ process.on('message', async (message) => {
           jobNotifyCheckinCount: getJobNotifyCheckinCount(),
           jobNotifyCheckoutCount: getJobNotifyCheckoutCount(),
           notifyTime: getNotifyTime(),
-          errorMessage: geterrorMessage(),
+          errorMessage: getErrorMessage(),
         },
       });
       break;

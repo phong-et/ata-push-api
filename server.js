@@ -84,23 +84,3 @@ function onListening() {
   var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
-
-// Inject services here
-// (async () => {
-//   global.service = require('./notificationAttedanceService');
-//   await global.service.run();
-//   global.notificationServiceStatus = global.service.getServiceStatus();
-// })();
-
-// Inject services here as childprocess
-(async () => {
-  // let log = console.log;
-  // let childProcess = require('child_process');
-  // let notificationAttedanceServiceChanel = global.notificationAttedanceServiceChanel =  childProcess.fork('./notificationAttedanceService.js');
-  // notificationAttedanceServiceChanel.on('message', async (message) => {
-  //   if (message.service === 'attendance')
-  //     if (message.statement === 'stop') notificationAttedanceService.kill();
-  //   log('Server got msg: %', message)
-  //   global.notificationAttendanceServiceInfo = message.notificationAttendanceServiceInfo;
-  // });
-})();
