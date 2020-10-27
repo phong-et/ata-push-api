@@ -84,7 +84,6 @@ async function run() {
       });
     serviceStatus = 'running';
     notifyTime = { notifyCheckInTime, notifyCheckOutTime };
-    //log(notifyCheckInTime);
     jobNotifyCheckin.start();
     jobNotifyCheckout.start();
     log(`> ${serviceName} service is running...`);

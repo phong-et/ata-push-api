@@ -5,7 +5,6 @@ const {
   startService,
   getInfos,
   stopService,
-  startServiceChildProcess,
 } = require('../handlers/notificationHandler');
 
 router.get('/', (_, res) => res.send('notification root routing'))
