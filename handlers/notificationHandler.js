@@ -17,7 +17,7 @@ async function startService(_, res) {
     });
     global.notificationAttendanceServiceChannel = notificationAttendanceServiceChannel;
     res.status(201).json({
-      msg: 'Service started',
+      msg: 'Service started successfully',
     });
   } else
     res.status(201).json({
@@ -52,9 +52,9 @@ async function getInfos(_, res) {
     let info = global.notificationAttendanceServiceInfo;
     res.send({
       status: info.serviceStatus,
-      getJobNotifyCheckinCount: info.jobNotifyCheckinCount,
-      getJobNotifyCheckoutCount: info.jobNotifyCheckoutCount,
-      getNotifyTime: info.notifyTime,
+      jobNotifyCheckinCount: info.jobNotifyCheckinCount,
+      jobNotifyCheckoutCount: info.jobNotifyCheckoutCount,
+      notifyTime: info.notifyTime,
     });
   } else
     res.send({

@@ -14,11 +14,13 @@ const cron = require('cron'),
 let serviceStatus = 'initial',
   jobNotifyCheckinCount = 0,
   jobNotifyCheckoutCount = 0,
+  notifyTime = {},
+  errorMessage = '',
   getServiceStatus = () => serviceStatus,
   getJobNotifyCheckinCount = () => jobNotifyCheckinCount,
   getJobNotifyCheckoutCount = () => jobNotifyCheckoutCount,
-  notifyTime = {},
-  getNotifyTime = () => notifyTime;
+  getNotifyTime = () => notifyTime,
+  geterrorMessage = () => errorMessage;
 
 function notify(type) {
   let url =
@@ -88,9 +90,11 @@ async function run() {
     log(`> ${serviceName} service is running...`);
   } catch (error) {
     serviceStatus = 'stop';
-    log(`> ${serviceName} service got error: %s`, error.message);
+    errorMessage = `${serviceName} service got error: ${error.message}`;
+    log('> %s', errorMessage);
   }
 }
+
 module.exports = {
   run,
   getServiceStatus,
@@ -114,6 +118,7 @@ process.on('message', async (message) => {
           jobNotifyCheckinCount: getJobNotifyCheckinCount(),
           jobNotifyCheckoutCount: getJobNotifyCheckoutCount(),
           notifyTime: getNotifyTime(),
+          errorMessage: geterrorMessage(),
         },
       });
       break;

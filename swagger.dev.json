@@ -18,7 +18,7 @@
     },
     {
       "name": "Notification Attendance service",
-      "description": "API for Notification Attendance"
+      "description": "API for Notification Attendance Service"
     }
   ],
   "schemes": ["http"],
@@ -54,7 +54,7 @@
         "tags": ["Notification Attendance service"],
         "summary": "Check informations of Notification Attendance service",
         "responses": {
-          "200": {
+          "201": {
             "description": "Message sent"
           }
         }

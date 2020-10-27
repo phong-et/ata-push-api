@@ -17,8 +17,8 @@
       "description": "API for Web push subscription"
     },
     {
-      "name": "Notification Service",
-      "description": "API for Notification service"
+      "name": "Notification Attendance service",
+      "description": "API for Notification Attendance Service"
     }
   ],
   "schemes": ["https"],
@@ -27,7 +27,7 @@
   "paths": {
     "/notification/start": {
       "post": {
-        "tags": ["Notification Service"],
+        "tags": ["Notification Attendance service"],
         "description": "Start Notification Attendance service",
         "produces": ["application/json"],
         "responses": {
@@ -39,7 +39,7 @@
     },
     "/notification/stop": {
       "put": {
-        "tags": ["Notification Service"],
+        "tags": ["Notification Attendance service"],
         "description": "Stop Notification Attendance service",
         "produces": ["application/json"],
         "responses": {
@@ -51,7 +51,7 @@
     },
     "/notification/infos": {
       "get": {
-        "tags": ["Notification Service"],
+        "tags": ["Notification Attendance service"],
         "summary": "Check informations of Notification Attendance service",
         "responses": {
           "200": {
