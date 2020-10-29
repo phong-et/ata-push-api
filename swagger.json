@@ -17,18 +17,22 @@
       "description": "API for Web push subscription"
     },
     {
-      "name": "Notification Attendance service",
-      "description": "API for Notification Attendance Service"
+      "name": "Notification Checkin service",
+      "description": "API for Notification Checkin Service"
+    },
+    {
+      "name": "Notification Checkout service",
+      "description": "API for Notification Checkout Service"
     }
   ],
   "schemes": ["https"],
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "paths": {
-    "/notification/start": {
+    "/notification/service/checkin/start": {
       "post": {
-        "tags": ["Notification Attendance service"],
-        "description": "Start Notification Attendance service",
+        "tags": ["Notification Checkin service"],
+        "description": "Start Notification Checkin service",
         "produces": ["application/json"],
         "responses": {
           "201": {
@@ -37,10 +41,10 @@
         }
       }
     },
-    "/notification/stop": {
+    "/notification/service/checkin/stop": {
       "put": {
-        "tags": ["Notification Attendance service"],
-        "description": "Stop Notification Attendance service",
+        "tags": ["Notification Checkin service"],
+        "description": "Stop Notification Checkin service",
         "produces": ["application/json"],
         "responses": {
           "201": {
@@ -49,10 +53,45 @@
         }
       }
     },
-    "/notification/infos": {
+    "/notification/service/checkin/infos": {
       "get": {
-        "tags": ["Notification Attendance service"],
-        "summary": "Check informations of Notification Attendance service",
+        "tags": ["Notification Checkin service"],
+        "summary": "Check informations of Notification Checkin service",
+        "responses": {
+          "201": {
+            "description": "Message sent"
+          }
+        }
+      }
+    },
+    "/notification/service/checkout/start": {
+      "post": {
+        "tags": ["Notification Checkout service"],
+        "description": "Start Notification Checkout service",
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "Request sent and excuted successfully"
+          }
+        }
+      }
+    },
+    "/notification/service/checkout/stop": {
+      "put": {
+        "tags": ["Notification Checkout service"],
+        "description": "Stop Notification Checkout service",
+        "produces": ["application/json"],
+        "responses": {
+          "201": {
+            "description": "Request sent and excuted successfully"
+          }
+        }
+      }
+    },
+    "/notification/service/checkout/infos": {
+      "get": {
+        "tags": ["Notification Checkout service"],
+        "summary": "Check informations of Notification Checkout service",
         "responses": {
           "201": {
             "description": "Message sent"

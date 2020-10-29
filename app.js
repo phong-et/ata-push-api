@@ -4,8 +4,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-//var indexRouter = require('./routes/index');
-//var usersRouter = require('./routes/users');
 var subscriptionRouter = require('./routes/subscription');
 var notificationRouter =  require('./routes/notification');
 
@@ -28,8 +26,6 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-//app.use('/', indexRouter);
-//app.use('/users', usersRouter);
 app.use('/subscription', subscriptionRouter);
 app.use('/notification', notificationRouter);
 
