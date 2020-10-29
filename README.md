@@ -1,10 +1,26 @@
 # ata-push-api
 
-The push notification service
+## Push Notification API(Without authentication)
 
-## Live demo and api docs
+- API docs included Routing Execution
+  - Docs API: <https://ata-push-api.herokuapp.com/api-docs>
+  - Testing page : <https://ata-push-api.herokuapp.com>
+- Inject other services
+- Check infomation of injected service
 
-- <https://ata-push-api.herokuapp.com/api-docs/>
+## Subscribe Button
+
+- When Push Notification server restarted, notification is only available if user browse page again(the browser will update the subscription to server automaticly , don't need click to "Notify Attendance")
+
+## Notification Attendance Service
+
+- Get office's working hours and notify to all users already have subscribed (Clicked to Notify Attendance button and allowed)
+- Notify check-in early 5 minutes
+- Notify check-out as end time
+
+## ATA Core API
+
+- Public get /api/officesettings
 
 ## Setup
 
@@ -40,6 +56,3 @@ npm start
     ```
 
 ## Notes
-
-- Server restart
-  - Client must to browse page again to send subscription automaticly

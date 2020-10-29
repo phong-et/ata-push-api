@@ -53,7 +53,12 @@ function formatMH(mhNumber) {
 
 async function run() {
   try {
-    let officeSettings = await fetchOfficeSettings(),
+    let officeSettings = 
+      {
+        startTime: "2000-01-01T15:00:15+00:00", 
+        endTime: "2000-01-02T15:00:00+00:00"
+      },
+      //await fetchOfficeSettings(),
       startTime = new Date(officeSettings.startTime),
       endTime = new Date(officeSettings.endTime),
       notifyCheckInTime =
