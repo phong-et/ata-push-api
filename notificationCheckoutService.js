@@ -11,8 +11,9 @@ let serviceStatus = 'initial',
   errorMessage = '',
   getServiceStatus = () => serviceStatus,
   getJobNotifyCheckoutCount = () => jobNotifyCheckoutCount,
-  getNotifyCheckoutTime = () =>  ({
+  getNotifyCheckoutTime = () => ({
     notifyCheckoutTime,
+    notifyCheckoutTimeISO,
     notifyCheckoutTimeGMT,
     notifyCheckoutTimeLocaleDate,
   }),
@@ -25,8 +26,10 @@ async function start() {
     let endTime = new Date(officeSettings.endTime);
     notifyCheckoutTime =
       formatMH(endTime.getMinutes()) + ' ' + formatMH(endTime.getHours());
+    notifyCheckoutTimeISO = officeSettings.endTime;
     notifyCheckoutTimeGMT = endTime.toGMTString();
-    notifyCheckoutTimeLocaleDate = endTime.toLocaleDateString() + ' ' + endTime.toLocaleTimeString();
+    notifyCheckoutTimeLocaleDate =
+      endTime.toLocaleDateString() + ' ' + endTime.toLocaleTimeString();
     log(getNotifyCheckoutTime());
     let jobNotifyCheckout = new cron.CronJob({
       cronTime: `00 ${notifyCheckoutTime} * * 0-6`,
