@@ -6,10 +6,16 @@ const { formatMH, notify, fetchOfficeSettings } = require('./attendanceUtils'),
 let serviceStatus = 'initial',
   jobNotifyCheckoutCount = 0,
   notifyCheckoutTime,
+  notifyCheckoutTimeGMT,
+  notifyCheckoutTimeLocaleDate,
   errorMessage = '',
   getServiceStatus = () => serviceStatus,
   getJobNotifyCheckoutCount = () => jobNotifyCheckoutCount,
-  getNotifyCheckoutTime = () => notifyCheckoutTime,
+  getNotifyCheckoutTime = () =>  ({
+    notifyCheckoutTime,
+    notifyCheckoutTimeGMT,
+    notifyCheckoutTimeLocaleDate,
+  }),
   getErrorMessage = () => errorMessage,
   notifyCheckout = () => notify('out');
 
@@ -19,7 +25,9 @@ async function start() {
     let endTime = new Date(officeSettings.endTime);
     notifyCheckoutTime =
       formatMH(endTime.getMinutes()) + ' ' + formatMH(endTime.getHours());
-
+    notifyCheckoutTimeGMT = endTime.toGMTString();
+    notifyCheckoutTimeLocaleDate = endTime.toLocaleDateString() + ' ' + endTime.toLocaleTimeString();
+    log(getNotifyCheckoutTime());
     let jobNotifyCheckout = new cron.CronJob({
       cronTime: `00 ${notifyCheckoutTime} * * 0-6`,
       onTick: function () {

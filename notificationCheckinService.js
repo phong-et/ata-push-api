@@ -6,10 +6,16 @@ const { formatMH, notify, fetchOfficeSettings } = require('./attendanceUtils'),
 let serviceStatus = 'initial',
   jobNotifyCheckinCount = 0,
   notifyCheckinTime,
+  notifyCheckinTimeGMT,
+  notifyCheckinTimeLocaleDate,
   errorMessage = '',
   getServiceStatus = () => serviceStatus,
   getJobNotifyCheckinCount = () => jobNotifyCheckinCount,
-  getNotifyCheckinTime = () => notifyCheckinTime,
+  getNotifyCheckinTime = () => ({
+    notifyCheckinTime,
+    notifyCheckinTimeGMT,
+    notifyCheckinTimeLocaleDate,
+  }),
   getErrorMessage = () => errorMessage,
   notifyCheckin = () => notify('in');
 
@@ -21,7 +27,9 @@ async function start() {
     );
     notifyCheckinTime =
       formatMH(startTime.getMinutes()) + ' ' + formatMH(startTime.getHours());
-    log(notifyCheckinTime)
+    notifyCheckinTimeGMT = startTime.toGMTString();
+    notifyCheckinTimeLocaleDate = startTime.toLocaleDateString() + ' ' + startTime.toLocaleTimeString();
+    log(getNotifyCheckinTime());
     let jobNotifyCheckin = new cron.CronJob({
       cronTime: `00 ${notifyCheckinTime} * * 0-6`,
       onTick: function () {
