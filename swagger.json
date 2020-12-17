@@ -1,39 +1,180 @@
 {
-  "swagger": "2.0",
+  "openapi": "3.0.0",
   "info": {
-    "version": "1.0.0",
-    "title": "Push server API",
-    "description": "Web push notification demo server",
-    "license": {
-      "name": "MIT",
-      "url": "https://opensource.org/licenses/MIT"
-    }
+    "title": "ATA Push API",
+    "version": "1.0.0"
   },
-  "host": "ata-push-api.herokuapp.com/",
-  "basePath": "",
-  "tags": [
+  "servers": [
     {
-      "name": "Web Push Subscription",
-      "description": "API for Web push subscription"
+      "description": "Development server",
+      "url": "http://localhost:8888"
     },
     {
-      "name": "Notification Checkin service",
-      "description": "API for Notification Checkin Service"
+      "description": "Test server",
+      "url": "https://ata-push-api.herokuapp.com"
     },
     {
-      "name": "Notification Checkout service",
-      "description": "API for Notification Checkout Service"
+      "description": "Production server",
+      "url": "https://ata-push-api.xyz"
     }
   ],
-  "schemes": ["https"],
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
   "paths": {
+    "/subscription/create": {
+      "post": {
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "Create a subscription",
+        "description": "Recevies a push subscription and save it to memory (RAM)",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PushSubscription"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PushSubscriptionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscription/notify/{id}": {
+      "get": {
+        "deprecated": true,
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "Notify to a specific subscription",
+        "description": "Send a notifiction statement to push api",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "subscription hash id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Notification statement was sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscription/notify-all": {
+      "post": {
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "Notify to all subscriptions endpoint",
+        "description": "Send a notification statement to push api",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationPopup"
+              }
+            }
+          },
+          "required": false,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "Notification statement was sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscription/list": {
+      "get": {
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "List all existing subscription ids in memory",
+        "responses": {
+          "200": {
+            "description": "Subscriptions has id list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionHashIds"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscription/check/{id}": {
+      "get": {
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "Check subscription hash id is existed in memory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "subscription hash id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Checking result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/notification/service/checkin/start": {
       "post": {
-        "tags": ["Notification Checkin service"],
+        "tags": [
+          "Notification Checkin Server"
+        ],
         "description": "Start Notification Checkin service",
-        "produces": ["application/json"],
         "responses": {
           "201": {
             "description": "Request sent and excuted successfully"
@@ -43,9 +184,10 @@
     },
     "/notification/service/checkin/stop": {
       "put": {
-        "tags": ["Notification Checkin service"],
+        "tags": [
+          "Notification Checkin Server"
+        ],
         "description": "Stop Notification Checkin service",
-        "produces": ["application/json"],
         "responses": {
           "201": {
             "description": "Request sent and excuted successfully"
@@ -55,20 +197,31 @@
     },
     "/notification/service/checkin/infos": {
       "get": {
-        "tags": ["Notification Checkin service"],
-        "summary": "Check informations of Notification Checkin service",
+        "tags": [
+          "Notification Checkin Server"
+        ],
+        "summary": "Get informations",
+        "description": "Get informations of Notification Checkin service",
         "responses": {
           "201": {
-            "description": "Message sent"
+            "description": "Infomation of service",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationInfo"
+                }
+              }
+            }
           }
         }
       }
     },
     "/notification/service/checkout/start": {
       "post": {
-        "tags": ["Notification Checkout service"],
+        "tags": [
+          "Notification Checkout Server"
+        ],
         "description": "Start Notification Checkout service",
-        "produces": ["application/json"],
         "responses": {
           "201": {
             "description": "Request sent and excuted successfully"
@@ -78,9 +231,10 @@
     },
     "/notification/service/checkout/stop": {
       "put": {
-        "tags": ["Notification Checkout service"],
+        "tags": [
+          "Notification Checkout Server"
+        ],
         "description": "Stop Notification Checkout service",
-        "produces": ["application/json"],
         "responses": {
           "201": {
             "description": "Request sent and excuted successfully"
@@ -90,177 +244,214 @@
     },
     "/notification/service/checkout/infos": {
       "get": {
-        "tags": ["Notification Checkout service"],
-        "summary": "Check informations of Notification Checkout service",
-        "responses": {
-          "201": {
-            "description": "Message sent"
-          }
-        }
-      }
-    },
-    "/subscription/create": {
-      "post": {
-        "tags": ["Web Push Subscription"],
-        "description": "Recevies a push subscription and save it in memory",
-        "parameters": [
-          {
-            "name": "pushSubscription",
-            "in": "body",
-            "description": "the subscription to be saved",
-            "schema": {
-              "$ref": "#/definitions/pushSubscription"
-            }
-          }
+        "tags": [
+          "Notification Checkout Server"
         ],
-        "produces": ["application/json"],
+        "summary": "Get informations",
+        "description": "Get informations of Notification Checkout service",
         "responses": {
           "201": {
-            "description": "everything ok",
-            "schema": {
-              "$ref": "#/definitions/pushSubscriptionResponse"
+            "description": "Message sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationInfo"
+                }
+              }
             }
           }
         }
       }
     },
-    "/subscription/notify/{id}": {
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
+    "/api/OfficeSettings": {
+      "get": {
+        "tags": [
+          "Example"
+        ],
+        "operationId": "OfficeSettings_GetServerDate",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PushSubscription"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Example"
+        ],
+        "operationId": "OfficeSettings_UpdateServerDate",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PushSubscription"
+              }
+            }
+          },
           "required": true,
-          "description": "ID of the subscription that we want to find",
-          "type": "string"
-        }
-      ],
-      "get": {
-        "tags": ["Web Push Subscription"],
-        "summary": "Sends a push message to the existing push subscription",
-        "responses": {
-          "202": {
-            "description": "Message sent"
-          }
-        }
-      }
-    },
-    "/subscription/notify-all": {
-      "parameters": [
-        {
-          "name": "title",
-          "in": "query",
-          "required": false,
-          "description": "Title of the notification that we want to push",
-          "type": "string"
+          "x-position": 1
         },
-        {
-          "name": "text",
-          "in": "query",
-          "required": false,
-          "description": "Content of the notification that we want to push",
-          "type": "string"
-        },
-        {
-          "name": "image",
-          "in": "query",
-          "required": false,
-          "description": "Background image of the notification that we want to push",
-          "type": "string"
-        },
-        {
-          "name": "tag",
-          "in": "query",
-          "required": false,
-          "description": "Refer at https://developer.mozilla.org/en-US/docs/Web/API/Notification/tag",
-          "type": "string"
-        },
-        {
-          "name": "url",
-          "in": "query",
-          "required": false,
-          "description": "Click to notificaition popup will open this url",
-          "type": "string"
-        }
-      ],
-      "get": {
-        "tags": ["Web Push Subscription"],
-        "summary": "Sends a push message to all existing push subscriptions",
         "responses": {
-          "202": {
-            "description": "Message sent"
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PushSubscriptionResponse"
+                }
+              }
+            }
           }
-        }
-      }
-    },
-    "/subscription/list": {
-      "get": {
-        "tags": ["Web Push Subscription"],
-        "summary": "List all existing push subscription ids",
-        "responses": {
-          "202": {
-            "description": "Message sent"
+        },
+        "security": [
+          {
+            "JWT": [
+              "Admin"
+            ]
           }
-        }
-      }
-    },
-    "/subscription/check/{id}": {
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "description": "ID of the subscription that we want to find",
-          "type": "string"
-        }
-      ],
-      "get": {
-        "tags": ["Web Push Subscription"],
-        "summary": "Check existing push subscription id",
-        "responses": {
-          "202": {
-            "description": "Message sent"
-          }
-        }
+        ]
       }
     }
   },
-  "definitions": {
-    "pushSubscription": {
-      "required": ["endpoint"],
-      "properties": {
-        "endpoint": {
-          "type": "string",
-          "uniqueItems": true
+  "components": {
+    "schemas": {
+      "PushSubscription": {
+        "required": [
+          "endpoint"
+        ],
+        "properties": {
+          "endpoint": {
+            "type": "string",
+            "uniqueItems": true
+          },
+          "expirationTime": {
+            "type": "string",
+            "uniqueItems": true
+          },
+          "keys": {
+            "$ref": "#/components/schemas/Keys"
+          }
+        }
+      },
+      "Keys": {
+        "properties": {
+          "p256dh": {
+            "type": "string",
+            "uniqueItems": true
+          },
+          "auth": {
+            "type": "string",
+            "uniqueItems": true
+          }
+        }
+      },
+      "PushSubscriptionResponse": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "uniqueItems": true
+          }
+        }
+      },
+      "NotificationPopup": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Title of the notification that we want to push"
+          },
+          "text": {
+            "type": "string",
+            "description": "Content of the notification that we want to push"
+          },
+          "image": {
+            "type": "string",
+            "description": "Content of the notification that we want to push"
+          },
+          "tag": {
+            "type": "string",
+            "description": "Refer at https://developer.mozilla.org/en-US/docs/Web/API/Notification/tag"
+          },
+          "url": {
+            "type": "string",
+            "description": "Click to notificaition popup will open this url"
+          }
+        }
+      },
+      "NotificationResponse": {
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "notifiedSubscriptions":{
+            "type": "string"
+          }
+        }
+      },
+      "SubscriptionHashIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
         },
-        "expirationTime": {
-          "type": "string",
-          "uniqueItems": true
-        },
-        "keys": {
-          "$ref": "#/definitions/Keys"
+        "example": [
+          "a",
+          "b",
+          "c"
+        ]
+      },
+      "NotificationInfo": {
+        "properties": {
+          "serviceStatus": {
+            "type": "string",
+            "description": "service Status"
+          },
+          "jobNotifyCheckinCount": {
+            "type": "string",
+            "description": "jobNotifyCheckinCount"
+          },
+          "jobNotifyCheckoutCount": {
+            "type": "string",
+            "description": "jobNotifyCheckoutCount"
+          },
+          "notifyTime": {
+            "type": "string",
+            "description": "notifyTime"
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "errorMessage"
+          }
         }
       }
     },
-    "Keys": {
-      "properties": {
-        "p256dh": {
-          "type": "string",
-          "uniqueItems": true
-        },
-        "auth": {
-          "type": "string",
-          "uniqueItems": true
-        }
-      }
-    },
-    "pushSubscriptionResponse": {
-      "required": ["id"],
-      "properties": {
-        "id": {
-          "type": "string",
-          "uniqueItems": true
-        }
+    "securitySchemes": {
+      "JWT": {
+        "type": "apiKey",
+        "description": "Type into the textbox: Bearer {your JWT token}.",
+        "name": "Authorization",
+        "in": "header"
       }
     }
-  }
+  },
+  "security": [
+    {
+      "JWT": []
+    }
+  ]
 }

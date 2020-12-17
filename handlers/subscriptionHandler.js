@@ -63,24 +63,39 @@ async function sendPushNotificationToOne(subscription, notificationData) {
     });
 }
 async function sendPushNotificationToAll(req, res) {
-  log('notify all subscriptions');
-  let notificationData = {
-    title: req.query['title'],
-    text: req.query['text'],
-    image: req.query['image'],
-    tag: req.query['tag'],
-    url: req.query['url'],
-  };
-  let notifiedSubscriptions = [];
-  for (let subscriptionId in subscriptions) {
-    log(subscriptions[subscriptionId]);
-    await sendPushNotificationToOne(
-      subscriptions[subscriptionId],
-      notificationData
-    );
-    notifiedSubscriptions.push(subscriptionId);
+  try {
+    log('notify all subscriptions');
+    let notificationData = {
+      title: req.body['title'],
+      text: req.body['text'],
+      image: req.body['image'],
+      tag: req.body['tag'],
+      url: req.body['url'],
+    };
+    let notifiedSubscriptions = [];
+    if (Object.keys(subscriptions).length === 0)
+      res.status(200).json({
+        status: false,
+        message: "Hasn't any subscription",
+      });
+    else {
+      for (let subscriptionId in subscriptions) {
+        log(subscriptions[subscriptionId]);
+        await sendPushNotificationToOne(
+          subscriptions[subscriptionId],
+          notificationData
+        );
+        notifiedSubscriptions.push(subscriptionId);
+      }
+      res.status(202).json({
+        status: true,
+        message: 'Notification statements were sent',
+        notifiedSubscriptions: notifiedSubscriptions,
+      });
+    }
+  } catch (error) {
+    res.status(202).json({ status: false, message: error.message });
   }
-  res.status(202).json({ notifiedSubscriptions: notifiedSubscriptions });
 }
 
 function listSubscription(_, res) {
