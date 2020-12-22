@@ -1,7 +1,10 @@
-const subscriptions = {},
+const env = process.env.NODE_ENV || 'development',
+  config = require('../config.json')[env],
+  subscriptions = {},
   webpush = require('web-push'),
   log = console.log,
-  crypto = require('crypto');
+  crypto = require('crypto'),
+  fetch = require('node-fetch');
 
 const vapidKeys = {
   privateKey: 'bdSiNzUhUP6piAxLH-tW88zfBlWWveIx0dAsDO66aVU',
@@ -106,6 +109,32 @@ function listSubscription(_, res) {
   log(sum);
   res.send(sum);
 }
+async function listSubscriptionFromDb(req, res) {
+  let options = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + config.tokenAtaPushService,
+    },
+  };
+  let url = config.hostAta + '/api/RecordAttendance/subscription/list';
+
+  let response = await fetch(url, options);
+  log(`${response.url}: ${response.status}(${response.statusText})`);
+  let message = '';
+  switch (response.status) {
+    case 401:
+      message = ' PushService token was expired or wrong format';
+    case 500:
+      res.status(response.status).send(response.statusText + message);
+      break;
+    case 200:
+      let subscriptions = await response.json();
+      log(subscriptions);
+      res.send(subscriptions);
+      break;
+  }
+}
 
 function isExistedSubscriptionId(req, res) {
   res.send({ isExisted: subscriptions[req.params.id] ? true : false });
@@ -116,5 +145,6 @@ module.exports = {
   sendPushNotification,
   sendPushNotificationToAll,
   listSubscription,
+  listSubscriptionFromDb,
   isExistedSubscriptionId,
 };

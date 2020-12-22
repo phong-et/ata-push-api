@@ -138,6 +138,29 @@
         }
       }
     },
+    "/subscription/list/db": {
+      "get": {
+        "tags": [
+          "Subscription"
+        ],
+        "summary": "List all existing subscription object from db",
+        "responses": {
+          "200": {
+            "description": "Subscriptions has id list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionHashIds"
+                }
+              }
+            }
+          },
+          "401":{
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
     "/subscription/check/{id}": {
       "get": {
         "tags": [
@@ -446,6 +469,11 @@
         "description": "Type into the textbox: Bearer {your JWT token}.",
         "name": "Authorization",
         "in": "header"
+      }
+    },
+    "responses":{
+      "UnauthorizedError":{
+        "description": "Access token is missing or invalid"
       }
     }
   },
