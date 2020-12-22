@@ -1,27 +1,21 @@
-const fetch = require('node-fetch'),
+const env = process.env.NODE_ENV || 'development',
+  config = require('./config.json')[env],
+  fetch = require('node-fetch'),
   log = console.log,
-  hostPushAPI =
-    process.env.NODE_ENV === 'production'
-      ? 'https://ata-push-api.herokuapp.com'
-      : 'http://localhost:8888',
-  hostAta =
-    process.env.NODE_ENV === 'production'
-      ? 'https://atacore.azurewebsites.net'
-      : 'http://localhost:5000';
+  hostPushAPI = config.hostPushAPI,
+  hostAta = config.hostPushAPI.hostAta;
 
 function notify(type) {
-  let url =
-      hostPushAPI +
-      '/subscription/notify-all?' +
-      new URLSearchParams({
-        title: `HAVE YOU CHECKED ${type.toUpperCase()} YET ?`,
-        text: `Please click here go to check${type.toLowerCase()} page`,
-      }),
+  let url = hostPushAPI + '/subscription/notify-all',
     options = {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        title: `HAVE YOU CHECKED ${type.toUpperCase()} YET ?`,
+        text: `Please click here go to check${type.toLowerCase()} page`,
+      }),
     };
   fetch(url, options).then((response) => {
     log(`${response.url}: ${response.status}(${response.statusText})`);

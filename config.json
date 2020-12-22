@@ -1,0 +1,16 @@
+{
+  "development": {
+    "hostPushAPI": "http://localhost:8888",
+    "hostAta": "http://localhost:5000",
+    "tokenAtaPushService": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJhZG1pbiIsInJvbGUiOiJBZG1pbiIsIm5iZiI6MTYwODYyMTc0NSwiZXhwIjoxNjQwMTU3NzQ1LCJpYXQiOjE2MDg2MjE3NDV9.S6zbwxPpPub59ooZr-AyActMtPPD6gt6pEJpVwp3TTAWd9Z4bfbthjUCxOONUCXKUd1Tb4eGpTfOUvf-so4cdg"
+  },
+  "production": {
+    "hostPushAPI": "https://ata-push-api.xyz",
+    "hostAta": "https://atacore.azurewebsites.net",
+    "tokenAtaPushService": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJhZG1pbiIsInJvbGUiOiJBZG1pbiIsIm5iZiI6MTYwODYyMTc0NSwiZXhwIjoxNjQwMTU3NzQ1LCJpYXQiOjE2MDg2MjE3NDV9.S6zbwxPpPub59ooZr-AyActMtPPD6gt6pEJpVwp3TTAWd9Z4bfbthjUCxOONUCXKUd1Tb4eGpTfOUvf-so4cdg"
+  },
+  "test": {
+    "hostPushAPI": "https://ata-push-api.herokuapp.com",
+    "hostAta": "http://localhost:5000"
+  }
+}
