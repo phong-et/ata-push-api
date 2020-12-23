@@ -8,7 +8,7 @@ const CryptoJS = require('crypto-js'),
       CryptoJS.AES.decrypt(token, key).toString(CryptoJS.enc.Utf8)
     );
     return (
-      new Date().getTime() - new Date(decryptedToken.expiredDate).getTime() <= 0
+      new Date().getTime() - new Date(decryptedToken.expiredTime).getTime() <= 0
     );
   };
 module.exports = async (req, res, next) => {

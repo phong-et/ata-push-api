@@ -1,10 +1,10 @@
 # ata-push-api
 
-## Push Notification API(Without authentication)
+## Push Notification API(OAS 3.0 and authentication with Bearer token)
 
 - API docs included Routing Execution
-  - Docs API: <https://ata-push-api.herokuapp.com/api-docs>
-  - Testing page : <https://ata-push-api.herokuapp.com>
+  - Docs API: <https://ata-push-api.xyz/api-docs>
+  - Testing page : <https://ata-push-api.xyz>
 - Inject other services
 - Check infomation of injected service
 
@@ -38,24 +38,29 @@ npm start
         hostPushAPI +
         '/subscription/notify-all?' +
         new URLSearchParams({
-            title: 'titile',
-            text: 'content',
-            image: 'path to bg img',
-            tag: 'tag',
-            url: 'url',
+            
         }),
         options = {
             method: 'GET',
+            authorization :'Bearer tokenxxxxx',
             headers: {
                 'Content-Type': 'application/json',
             },
+            body:JSON.stringify({
+                title: 'titile',
+                text: 'content',
+                image: 'path to bg img',
+                tag: 'tag',
+                url: 'url',
+            })
         };
     fetch(url, options).then((response) => {
         log(`${response.url}: ${response.status}(${response.statusText})`);
     });
     ```
 
-## Todo
+- Generate bearer token for authorization api : ```node genAPIToken```
+  - Default expired date quantity is 365 days
+  - Adjust expirated date quantity to 1 day by statement : ```node genAPIToken 1```
 
-- Covert docs to OAS 3.0
-- ATA_CORE API Supscription
+## Todo

@@ -5,21 +5,24 @@ const CryptoJS = require('crypto-js'),
   ];
 
 // Encrypt
-let expiredTime = 60 * 1000; // 0.365*24*3600*1000
-let ciphertext = CryptoJS.AES.encrypt(
-  JSON.stringify({ expiredDate: new Date().getTime() + expiredTime }),
+let expiratedDay = process.argv[2] || 365;
+let expiredTime = expiratedDay * 24 * 3600 * 1000; // 0.365*24*3600*1000
+let token = CryptoJS.AES.encrypt(
+  JSON.stringify({ expiredTime: new Date().getTime() + expiredTime }),
   key
 ).toString();
 
 // Decrypt
-let bytes = CryptoJS.AES.decrypt(ciphertext, key);
-let decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-log('Token: Bearer %s', ciphertext);
-log('Decrypted Token:%s', decryptedData); // [{id: 1}, {id: 2}]
+let bytes = CryptoJS.AES.decrypt(token, key);
+let decryptedToken = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+log('Expired day number: %s days', expiratedDay);
+log('Token: Bearer %s', token);
+log('Decrypted Token:%s', decryptedToken);
+log('Expired Date :%s', new Date(decryptedToken.expiredTime).toLocaleString());
 log('------- check token whether has expired yet -------');
 setTimeout(() => {
   let d1 = new Date().getTime(),
-    d2 = new Date(decryptedData.expiredDate).getTime();
+    d2 = new Date(decryptedToken.expiredTime).getTime();
   log('d1 - d2: %s miliseconds', d1 - d2);
   log('==> %s', d1 - d2 <= 0 ? 'Token is available' : 'Token was expired');
 }, 2000);
