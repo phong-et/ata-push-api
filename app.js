@@ -14,7 +14,7 @@ const authMiddleware = require('./auth')
 var app = express();
 
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocumentFileName = './swagger.json';
+const swaggerDocumentFileName = './swagger.json?v=2';
 const swaggerDocument = require(swaggerDocumentFileName);
 
 app.use(logger('dev'));
