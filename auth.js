@@ -16,6 +16,7 @@ module.exports = async (req, res, next) => {
     log(req.path);
     if (req.path.indexOf('/api-docs') > -1) next();
     else if (req.path.indexOf('/subscription/create') > -1) next();
+    else if (req.path.indexOf('/subscription/check/') > -1) next();
     else {
       const { authorization } = req.headers;
       if (!authorization) {
