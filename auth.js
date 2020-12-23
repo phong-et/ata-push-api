@@ -14,7 +14,8 @@ const CryptoJS = require('crypto-js'),
 module.exports = async (req, res, next) => {
   try {
     log(req.path);
-    if (req.path.indexOf('/api-docs/') > -1) next();
+    if (req.path.indexOf('/api-docs') > -1) next();
+    else if (req.path.indexOf('/subscription/create') > -1) next();
     else {
       const { authorization } = req.headers;
       if (!authorization) {

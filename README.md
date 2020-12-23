@@ -63,4 +63,14 @@ npm start
   - Default expired date quantity is 365 days
   - Adjust expirated date quantity to 1 day by statement : ```node genAPIToken 1```
 
-## Todo
+## Notes
+
+- Tino host smoothly
+  - Clone from github
+  - Create App
+    - /api (folder path clone from github)
+    - server.js (file start app)
+    - Development (enviroiment)
+  - Stop app 1st
+  - Npm install modules (keep development mode)
+  - Start again
