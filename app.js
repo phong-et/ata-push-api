@@ -9,6 +9,7 @@ var notificationRouter =  require('./routes/notification');
 
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const authMiddleware = require('./auth')
 
 var app = express();
 
@@ -24,8 +25,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use(authMiddleware)
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/subscription', subscriptionRouter);
 app.use('/notification', notificationRouter);
 

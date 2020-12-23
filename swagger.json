@@ -21,9 +21,7 @@
   "paths": {
     "/subscription/create": {
       "post": {
-        "tags": [
-          "Subscription"
-        ],
+        "tags": ["Subscription"],
         "summary": "Create a subscription",
         "description": "Recevies a push subscription and save it to memory (RAM)",
         "requestBody": {
@@ -55,9 +53,7 @@
     "/subscription/notify/{id}": {
       "get": {
         "deprecated": true,
-        "tags": [
-          "Subscription"
-        ],
+        "tags": ["Subscription"],
         "summary": "Notify to a specific subscription",
         "description": "Send a notifiction statement to push api",
         "parameters": [
@@ -87,9 +83,7 @@
     },
     "/subscription/notify-all": {
       "post": {
-        "tags": [
-          "Subscription"
-        ],
+        "tags": ["Subscription"],
         "summary": "Notify to all subscriptions endpoint",
         "description": "Send a notification statement to push api",
         "requestBody": {
@@ -120,9 +114,7 @@
     },
     "/subscription/list": {
       "get": {
-        "tags": [
-          "Subscription"
-        ],
+        "tags": ["Subscription"],
         "summary": "List all existing subscription ids in memory",
         "responses": {
           "200": {
@@ -140,9 +132,7 @@
     },
     "/subscription/list/db": {
       "get": {
-        "tags": [
-          "Subscription"
-        ],
+        "tags": ["Subscription"],
         "summary": "List all existing subscription object from db",
         "responses": {
           "200": {
@@ -150,22 +140,23 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SubscriptionHashIds"
+                  "$ref": "#/components/schemas/ListSubscription"
                 }
               }
             }
           },
-          "401":{
+          "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
           }
         }
       }
     },
     "/subscription/check/{id}": {
       "get": {
-        "tags": [
-          "Subscription"
-        ],
+        "tags": ["Subscription"],
         "summary": "Check subscription hash id is existed in memory",
         "parameters": [
           {
@@ -194,9 +185,7 @@
     },
     "/notification/service/checkin/start": {
       "post": {
-        "tags": [
-          "Notification Checkin Server"
-        ],
+        "tags": ["Notification Checkin Server"],
         "description": "Start Notification Checkin service",
         "responses": {
           "201": {
@@ -207,9 +196,7 @@
     },
     "/notification/service/checkin/stop": {
       "put": {
-        "tags": [
-          "Notification Checkin Server"
-        ],
+        "tags": ["Notification Checkin Server"],
         "description": "Stop Notification Checkin service",
         "responses": {
           "201": {
@@ -220,9 +207,7 @@
     },
     "/notification/service/checkin/infos": {
       "get": {
-        "tags": [
-          "Notification Checkin Server"
-        ],
+        "tags": ["Notification Checkin Server"],
         "summary": "Get informations",
         "description": "Get informations of Notification Checkin service",
         "responses": {
@@ -241,9 +226,7 @@
     },
     "/notification/service/checkout/start": {
       "post": {
-        "tags": [
-          "Notification Checkout Server"
-        ],
+        "tags": ["Notification Checkout Server"],
         "description": "Start Notification Checkout service",
         "responses": {
           "201": {
@@ -254,9 +237,7 @@
     },
     "/notification/service/checkout/stop": {
       "put": {
-        "tags": [
-          "Notification Checkout Server"
-        ],
+        "tags": ["Notification Checkout Server"],
         "description": "Stop Notification Checkout service",
         "responses": {
           "201": {
@@ -267,9 +248,7 @@
     },
     "/notification/service/checkout/infos": {
       "get": {
-        "tags": [
-          "Notification Checkout Server"
-        ],
+        "tags": ["Notification Checkout Server"],
         "summary": "Get informations",
         "description": "Get informations of Notification Checkout service",
         "responses": {
@@ -288,9 +267,7 @@
     },
     "/api/OfficeSettings": {
       "get": {
-        "tags": [
-          "Example"
-        ],
+        "tags": ["Example"],
         "operationId": "OfficeSettings_GetServerDate",
         "responses": {
           "200": {
@@ -306,9 +283,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Example"
-        ],
+        "tags": ["Example"],
         "operationId": "OfficeSettings_UpdateServerDate",
         "requestBody": {
           "x-name": "command",
@@ -336,9 +311,7 @@
         },
         "security": [
           {
-            "JWT": [
-              "Admin"
-            ]
+            "JWT": ["Admin"]
           }
         ]
       }
@@ -347,9 +320,7 @@
   "components": {
     "schemas": {
       "PushSubscription": {
-        "required": [
-          "endpoint"
-        ],
+        "required": ["endpoint"],
         "properties": {
           "endpoint": {
             "type": "string",
@@ -377,9 +348,7 @@
         }
       },
       "PushSubscriptionResponse": {
-        "required": [
-          "id"
-        ],
+        "required": ["id"],
         "properties": {
           "id": {
             "type": "string",
@@ -412,9 +381,7 @@
         }
       },
       "NotificationResponse": {
-        "required": [
-          "status"
-        ],
+        "required": ["status"],
         "properties": {
           "status": {
             "type": "boolean"
@@ -422,7 +389,7 @@
           "message": {
             "type": "string"
           },
-          "notifiedSubscriptions":{
+          "notifiedSubscriptions": {
             "type": "string"
           }
         }
@@ -432,11 +399,56 @@
         "items": {
           "type": "string"
         },
-        "example": [
-          "a",
-          "b",
-          "c"
-        ]
+        "example": ["a", "b", "c"]
+      },
+      "ListSubscription": {
+        "required": ["success"],
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string",
+            "uniqueItems": true
+          },
+          "subscriptions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "$ref": "#/components/schemas/SubscriptionDto"
+            },
+            "example": [
+              {
+                "id": "7af99b26-2470-4c29-bea7-08d8a236de55",
+                "userId": "5af5adf1-c5e3-4069-ae3a-08d86b417c61",
+                "subscriptionHashId": "string",
+                "subscriptionJSON": "string"
+              }
+            ]
+          }
+        }
+      },
+      "SubscriptionDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "guid"
+          },
+          "subscriptionHashId": {
+            "type": "string",
+            "nullable": true
+          },
+          "subscriptionJSON": {
+            "type": "string",
+            "nullable": true
+          }
+        }
       },
       "NotificationInfo": {
         "properties": {
@@ -463,17 +475,20 @@
         }
       }
     },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Access token is missing or invalid"
+      },
+      "InternalServerError": {
+        "description": "Error from AtaCore Server"
+      }
+    },
     "securitySchemes": {
       "JWT": {
         "type": "apiKey",
         "description": "Type into the textbox: Bearer {your JWT token}.",
         "name": "Authorization",
         "in": "header"
-      }
-    },
-    "responses":{
-      "UnauthorizedError":{
-        "description": "Access token is missing or invalid"
       }
     }
   },

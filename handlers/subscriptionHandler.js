@@ -124,14 +124,13 @@ async function listSubscriptionFromDb(req, res) {
   let message = '';
   switch (response.status) {
     case 401:
-      message = ' PushService token was expired or wrong format';
+      message = ' Access token is missing or invalid';
     case 500:
       res.status(response.status).send(response.statusText + message);
       break;
     case 200:
       let subscriptions = await response.json();
-      log(subscriptions);
-      res.send(subscriptions);
+      res.send({ success: true, subscriptions: subscriptions });
       break;
   }
 }
