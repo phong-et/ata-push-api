@@ -1,11 +1,20 @@
 const env = process.env.NODE_ENV || 'development',
   config = require('../config.json')[env],
-  subscriptions = {},
   webpush = require('web-push'),
   log = console.log,
   crypto = require('crypto'),
   fetch = require('node-fetch');
 
+let subscriptions = {};
+fetchAllSubscriptionsFromDb().then((response) => {
+  if (response.success) {
+    response.subscriptions.forEach((subscription) => {
+      subscriptions[subscription.subscriptionHashId] = JSON.parse(
+        subscription.subscriptionJSON
+      );
+    });
+  } else throw response.message;
+});
 const vapidKeys = {
   privateKey: 'bdSiNzUhUP6piAxLH-tW88zfBlWWveIx0dAsDO66aVU',
   publicKey:
@@ -17,6 +26,30 @@ webpush.setVapidDetails(
   vapidKeys.publicKey,
   vapidKeys.privateKey
 );
+
+async function fetchAllSubscriptionsFromDb() {
+  let options = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + config.tokenAtaPushService,
+    },
+  };
+  let url = config.hostAta + '/api/RecordAttendance/subscription/list';
+
+  let response = await fetch(url, options);
+  log(`${response.url}: ${response.status}(${response.statusText})`);
+  let message = '';
+  switch (response.status) {
+    case 401:
+      message = ' Access token is missing or invalid';
+    case 500:
+      return response.statusText + message;
+    case 200:
+      let subscriptions = await response.json();
+      return { success: true, subscriptions: subscriptions };
+  }
+}
 
 function createHash(input) {
   const md5sum = crypto.createHash('md5');
@@ -83,7 +116,6 @@ async function sendPushNotificationToAll(req, res) {
       });
     else {
       for (let subscriptionId in subscriptions) {
-        log(subscriptions[subscriptionId]);
         await sendPushNotificationToOne(
           subscriptions[subscriptionId],
           notificationData
@@ -102,12 +134,16 @@ async function sendPushNotificationToAll(req, res) {
 }
 
 function listSubscription(_, res) {
-  let ids = [],
-    sum = {};
-  for (let subscriptionId in subscriptions) ids.push(subscriptionId);
-  sum[Object.keys(subscriptions).length] = ids;
-  log(sum);
-  res.send(sum);
+  res.send(
+    JSON.stringify(
+      {
+        subscriptionCount: Object.keys(subscriptions).length,
+        subscriptions: subscriptions,
+      },
+      null,
+      4
+    )
+  );
 }
 async function listSubscriptionFromDb(req, res) {
   let options = {
