@@ -1,15 +1,11 @@
 const cron = require('cron'),
+  env = process.env.NODE_ENV || 'development',
+  config = require('./config.json')[env],
   fetch = require('node-fetch'),
   log = console.log,
-  serviceName = 'Notification Attendance',
-  hostPushAPI =
-    process.env.NODE_ENV === 'production'
-      ? 'https://ata-push-api.herokuapp.com'
-      : 'http://localhost:8888',
-  hostAta =
-    process.env.NODE_ENV === 'production'
-      ? 'https://atacore.azurewebsites.net'
-      : 'http://localhost:5000';
+  hostPushAPI = config.hostPushAPI,
+  hostAta = config.hostPushAPI.hostAta,
+  serviceName = 'Notification Attendance';
 
 let serviceStatus = 'initial',
   jobNotifyCheckinCount = 0,
@@ -53,12 +49,12 @@ function formatMH(mhNumber) {
 
 async function run() {
   try {
-    let officeSettings = 
-      {
-        startTime: "2000-01-01T15:00:15+00:00", 
-        endTime: "2000-01-02T15:00:00+00:00"
-      },
-      //await fetchOfficeSettings(),
+    let officeSettings =
+        // {
+        //   startTime: '2000-01-01T15:00:15+00:00',
+        //   endTime: '2000-01-02T15:00:00+00:00',
+        // },
+        await fetchOfficeSettings(),
       startTime = new Date(officeSettings.startTime),
       endTime = new Date(officeSettings.endTime),
       notifyCheckInTime =
@@ -105,7 +101,7 @@ module.exports = {
   getJobNotifyCheckinCount,
   getJobNotifyCheckoutCount,
   getNotifyTime,
-  getErrorMessage
+  getErrorMessage,
 };
 (() => log(`> ${serviceName} service was injected`))();
 process.on('message', async (message) => {
