@@ -8,19 +8,18 @@ async function startService(_, res) {
       './notificationAttendanceService.js'
     );
     notificationAttendanceServiceChannel.on('message', async (message) => {
-      log('Server got msg:', message);
-      global.notificationAttendanceServiceInfo =
-        message.notificationAttendanceServiceInfo;
+      //log('startService, Server got msg:', message);
+      if (message.startServiceInfo)
+        res.send({
+          ...message,
+        });
     });
     notificationAttendanceServiceChannel.send({
       statement: 'start',
     });
     global.notificationAttendanceServiceChannel = notificationAttendanceServiceChannel;
-    res.status(201).json({
-      msg: 'Service started successfully',
-    });
   } else
-    res.status(201).json({
+    res.send({
       msg: 'Service already has been runing before',
     });
 }
@@ -38,24 +37,24 @@ function stopService(req, res) {
     msg = 'Stop service has got error';
   }
   global.notificationAttendanceServiceChannel = null;
-  global.notificationAttendanceServiceInfo = null;
   log('> Notification Attendance service stopped');
-  res.status(201).json({ msg });
+  res.send({ msg });
 }
 
 async function getInfos(_, res) {
   if (global.notificationAttendanceServiceChannel) {
+    global.notificationAttendanceServiceChannel.on(
+      'message',
+      async (message) => {
+        //log('getInfos, Server got msg:', message);
+        if (message.getInfos)
+          res.send({
+            ...message,
+          });
+      }
+    );
     global.notificationAttendanceServiceChannel.send({
       statement: 'getInfos',
-    });
-    await new Promise((r) => setTimeout(r, 2000));
-    let info = global.notificationAttendanceServiceInfo;
-    res.send({
-      status: info.serviceStatus,
-      jobNotifyCheckinCount: info.jobNotifyCheckinCount,
-      jobNotifyCheckoutCount: info.jobNotifyCheckoutCount,
-      notifyTime: info.notifyTime,
-      errorMessage: info.errorMessage
     });
   } else
     res.send({

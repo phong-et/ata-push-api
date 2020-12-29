@@ -13,7 +13,7 @@ fetchAllSubscriptionsFromDb().then((response) => {
         subscription.subscriptionJSON
       );
     });
-  } else throw response.message;
+  }
 });
 const vapidKeys = {
   privateKey: 'bdSiNzUhUP6piAxLH-tW88zfBlWWveIx0dAsDO66aVU',
@@ -37,18 +37,29 @@ async function fetchAllSubscriptionsFromDb() {
   };
   let url = config.hostAta + '/api/RecordAttendance/subscription/list';
 
-  let response = await fetch(url, options);
-  log(`${response.url}: ${response.status}(${response.statusText})`);
-  let message = '';
-  switch (response.status) {
-    case 401:
-      message = ' Access token is missing or invalid';
-    case 500:
-      return response.statusText + message;
-    case 200:
-      let subscriptions = await response.json();
-      return { success: true, subscriptions: subscriptions };
-  }
+  return await fetch(url, options)
+    .then(async (response) => {
+      log(`${response.url}: ${response.status}(${response.statusText})`);
+      let message = '';
+      switch (response.status) {
+        case 401:
+          return {
+            success: true,
+            message: ' Access token is missing or invalid',
+          };
+        case 500:
+          return { success: true, message: response.statusText + message };
+        case 200:
+          let subscriptions = await response.json();
+          return { success: true, subscriptions: subscriptions };
+        default:
+          return { success: false, message: 'unkonwn error' };
+      }
+    })
+    .catch((error) => {
+      log(message);
+      return { success: false, message: error.message };
+    });
 }
 
 function createHash(input) {
