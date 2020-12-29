@@ -4,7 +4,7 @@ const cron = require('cron'),
   fetch = require('node-fetch'),
   log = console.log,
   hostPushAPI = config.hostPushAPI,
-  hostAta = config.hostPushAPI.hostAta,
+  hostAta = config.hostAta,
   serviceName = 'Notification Attendance';
 
 let serviceStatus = 'initial',
@@ -19,18 +19,17 @@ let serviceStatus = 'initial',
   getErrorMessage = () => errorMessage;
 
 function notify(type) {
-  let url =
-      hostPushAPI +
-      '/subscription/notify-all?' +
-      new URLSearchParams({
+  let url = hostPushAPI + '/subscription/notify-all',
+    options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + config.tokenAtaPushAPI,
+      },
+      body: JSON.stringify({
         title: `HAVE YOU CHECKED ${type.toUpperCase()} YET ?`,
         text: `Please click here go to check${type.toLowerCase()} page`,
       }),
-    options = {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
     };
   fetch(url, options).then((response) => {
     log(`${response.url}: ${response.status}(${response.statusText})`);
@@ -49,60 +48,64 @@ function formatMH(mhNumber) {
 
 async function run() {
   try {
-    let officeSettings =
-        // {
-        //   startTime: '2000-01-01T15:00:15+00:00',
-        //   endTime: '2000-01-02T15:00:00+00:00',
-        // },
-        await fetchOfficeSettings(),
-      startTime = new Date(officeSettings.startTime),
-      endTime = new Date(officeSettings.endTime),
-      notifyCheckInTime =
-        formatMH(startTime.getMinutes() - 5) +
-        ' ' +
-        formatMH(startTime.getHours()),
-      notifyCheckOutTime =
+    let officeSettings = await fetchOfficeSettings();
+
+    let startTime = new Date(
+        new Date(officeSettings.startTime).getTime() - 5 * 60 * 1000
+      ),
+      notifyCheckinTime =
+        formatMH(startTime.getMinutes()) + ' ' + formatMH(startTime.getHours()),
+      notifyCheckinTimeISO = officeSettings.startTime,
+      notifyCheckinTimeGMT = startTime.toGMTString(),
+      notifyCheckinTimeLocaleDate =
+        startTime.toLocaleDateString() + ' ' + startTime.toLocaleTimeString();
+    //notifyTime['notifyCheckinTime'] = notifyCheckinTime;
+    //log(notifyCheckinTime);
+    let jobNotifyCheckin = new cron.CronJob({
+      cronTime: `00 ${notifyCheckinTime} * * 0-6`,
+      onTick: function () {
+        jobNotifyCheckinCount++;
+        log('Notify checkin...');
+        notify('in');
+      },
+      start: true,
+      timeZone: 'Asia/Ho_Chi_Minh',
+    });
+
+    let endTime = new Date(officeSettings.endTime),
+      notifyCheckoutTime =
         formatMH(endTime.getMinutes()) + ' ' + formatMH(endTime.getHours()),
-      jobNotifyCheckin = new cron.CronJob({
-        cronTime: `00 ${notifyCheckInTime} * * 0-6`,
-        onTick: function () {
-          jobNotifyCheckinCount++;
-          log('Notify checkin...');
-          notify('in');
-        },
-        start: true,
-        timeZone: 'Asia/Ho_Chi_Minh',
-      }),
-      jobNotifyCheckout = new cron.CronJob({
-        cronTime: `00 ${notifyCheckOutTime} * * 0-6`,
-        onTick: function () {
-          jobNotifyCheckoutCount++;
-          log('Notify checkout...');
-          notify('out');
-        },
-        start: true,
-        timeZone: 'Asia/Ho_Chi_Minh',
-      });
+      notifyCheckoutTimeISO = officeSettings.endTime,
+      notifyCheckoutTimeGMT = endTime.toGMTString(),
+      notifyCheckoutTimeLocaleDate =
+        endTime.toLocaleDateString() + ' ' + endTime.toLocaleTimeString();
+    //notifyTime['notifyCheckoutTime'] = notifyCheckoutTime;
+    //log(notifyCheckoutTime);
+    let jobNotifyCheckout = new cron.CronJob({
+      cronTime: `00 ${notifyCheckoutTime} * * 0-6`,
+      onTick: function () {
+        jobNotifyCheckoutCount++;
+        log('Notify checkout...');
+        notify('out');
+      },
+      start: true,
+      timeZone: 'Asia/Ho_Chi_Minh',
+    });
     serviceStatus = 'running';
-    notifyTime = { notifyCheckInTime, notifyCheckOutTime };
+    notifyTime = {
+      notifyCheckInTime: notifyCheckinTime,
+      notifyCheckOutTime: notifyCheckoutTime,
+    };
     jobNotifyCheckin.start();
     jobNotifyCheckout.start();
     log(`> ${serviceName} service is running...`);
   } catch (error) {
     serviceStatus = 'stop';
     errorMessage = `${serviceName} service got error: ${error.message}`;
-    log('> %s', errorMessage);
+    log('> %s', error);
   }
 }
 
-module.exports = {
-  run,
-  getServiceStatus,
-  getJobNotifyCheckinCount,
-  getJobNotifyCheckoutCount,
-  getNotifyTime,
-  getErrorMessage,
-};
 (() => log(`> ${serviceName} service was injected`))();
 process.on('message', async (message) => {
   log('%s service got message: %s', serviceName, message);
@@ -128,4 +131,4 @@ process.on('message', async (message) => {
       break;
   }
 });
-process.send({ service: 'attendence', statement: 'initial' });
+//process.send({ service: 'attendence', statement: 'initial' });

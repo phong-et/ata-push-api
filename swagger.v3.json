@@ -185,6 +185,7 @@
     },
     "/notification/service/checkin/start": {
       "post": {
+        "deprecated": true,
         "tags": ["Notification Checkin Server"],
         "description": "Start Notification Checkin service",
         "responses": {
@@ -196,6 +197,7 @@
     },
     "/notification/service/checkin/stop": {
       "put": {
+        "deprecated": true,
         "tags": ["Notification Checkin Server"],
         "description": "Stop Notification Checkin service",
         "responses": {
@@ -207,6 +209,7 @@
     },
     "/notification/service/checkin/infos": {
       "get": {
+        "deprecated": true,
         "tags": ["Notification Checkin Server"],
         "summary": "Get informations",
         "description": "Get informations of Notification Checkin service",
@@ -226,6 +229,7 @@
     },
     "/notification/service/checkout/start": {
       "post": {
+        "deprecated": true,
         "tags": ["Notification Checkout Server"],
         "description": "Start Notification Checkout service",
         "responses": {
@@ -237,6 +241,7 @@
     },
     "/notification/service/checkout/stop": {
       "put": {
+        "deprecated": true,
         "tags": ["Notification Checkout Server"],
         "description": "Stop Notification Checkout service",
         "responses": {
@@ -248,9 +253,52 @@
     },
     "/notification/service/checkout/infos": {
       "get": {
+        "deprecated": true,
         "tags": ["Notification Checkout Server"],
         "summary": "Get informations",
         "description": "Get informations of Notification Checkout service",
+        "responses": {
+          "201": {
+            "description": "Message sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/notification/service/attendance/start": {
+      "post": {
+        "tags": ["Notification Attendance Service"],
+        "description": "Start Notification Attendance service",
+        "responses": {
+          "201": {
+            "description": "Request sent and excuted successfully"
+          }
+        }
+      }
+    },
+    "/notification/service/attendance/stop": {
+      "put": {
+        "tags": ["Notification Attendance Service"],
+        "description": "Stop Notification Attendance service",
+        "responses": {
+          "201": {
+            "description": "Request sent and excuted successfully"
+          }
+        }
+      }
+    },
+    "/notification/service/attendance/infos": {
+      "get": {
+        "tags": ["Notification Attendance Service"],
+        "summary": "Get informations",
+        "description": "Get informations of Notification Attendance service",
         "responses": {
           "201": {
             "description": "Message sent",

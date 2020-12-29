@@ -32,7 +32,7 @@ async function fetchAllSubscriptionsFromDb() {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + config.tokenAtaPushService,
+      Authorization: 'Bearer ' + config.tokenAtaCoreForPushServiceUserRole,
     },
   };
   let url = config.hostAta + '/api/RecordAttendance/subscription/list';
@@ -65,7 +65,7 @@ function handlePushNotificationSubscription(req, res) {
 }
 
 function sendPushNotification(req, res) {
-  console.log(subscriptions);
+  log(subscriptions);
   const subscriptionId = req.params.id;
   const pushSubscription = subscriptions[subscriptionId];
   webpush
@@ -80,7 +80,7 @@ function sendPushNotification(req, res) {
       })
     )
     .catch((err) => {
-      console.log(err);
+      log(err);
     });
   res.status(202).json({});
 }
@@ -92,11 +92,14 @@ async function sendPushNotificationToOne(subscription, notificationData) {
     tag: notificationData.tag || 'Attendance notification',
     url: notificationData.url || '/record-attendance',
   };
+  let success = true;
   await webpush
     .sendNotification(subscription, JSON.stringify(notificationData))
     .catch((err) => {
-      console.log(err);
+      log(err);
+      success = false;
     });
+  return success;
 }
 async function sendPushNotificationToAll(req, res) {
   try {
@@ -108,7 +111,7 @@ async function sendPushNotificationToAll(req, res) {
       tag: req.body['tag'],
       url: req.body['url'],
     };
-    let notifiedSubscriptions = [];
+    let notifiedSubscriptions = { success: [], failed: [] };
     if (Object.keys(subscriptions).length === 0)
       res.status(200).json({
         status: false,
@@ -116,11 +119,12 @@ async function sendPushNotificationToAll(req, res) {
       });
     else {
       for (let subscriptionId in subscriptions) {
-        await sendPushNotificationToOne(
+        let success = await sendPushNotificationToOne(
           subscriptions[subscriptionId],
           notificationData
         );
-        notifiedSubscriptions.push(subscriptionId);
+        if (success) notifiedSubscriptions.success.push(subscriptionId);
+        else notifiedSubscriptions.failed.push(subscriptionId);
       }
       res.status(202).json({
         status: true,
@@ -150,7 +154,7 @@ async function listSubscriptionFromDb(req, res) {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + config.tokenAtaPushService,
+      Authorization: 'Bearer ' + config.tokenAtaCoreForPushServiceUserRole,
     },
   };
   let url = config.hostAta + '/api/RecordAttendance/subscription/list';
