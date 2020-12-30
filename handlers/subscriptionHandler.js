@@ -53,7 +53,10 @@ async function fetchAllSubscriptionsFromDb() {
           let subscriptions = await response.json();
           return { success: true, subscriptions: subscriptions };
         default:
-          return { success: false, message: 'unkonwn error' };
+          return {
+            success: false,
+            message: response.url + ' ' + response.statusText,
+          };
       }
     })
     .catch((error) => {
@@ -161,29 +164,7 @@ function listSubscription(_, res) {
   );
 }
 async function listSubscriptionFromDb(req, res) {
-  let options = {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + config.tokenAtaCoreForPushServiceUserRole,
-    },
-  };
-  let url = config.hostAta + '/api/RecordAttendance/subscription/list';
-
-  let response = await fetch(url, options);
-  log(`${response.url}: ${response.status}(${response.statusText})`);
-  let message = '';
-  switch (response.status) {
-    case 401:
-      message = ' Access token is missing or invalid';
-    case 500:
-      res.status(response.status).send(response.statusText + message);
-      break;
-    case 200:
-      let subscriptions = await response.json();
-      res.send({ success: true, subscriptions: subscriptions });
-      break;
-  }
+  res.send(await fetchAllSubscriptionsFromDb());
 }
 
 function isExistedSubscriptionId(req, res) {
