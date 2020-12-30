@@ -60,7 +60,7 @@ async function fetchAllSubscriptionsFromDb() {
       }
     })
     .catch((error) => {
-      log(message);
+      log(error.message);
       return { success: false, message: error.message };
     });
 }

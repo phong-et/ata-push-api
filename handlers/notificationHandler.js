@@ -1,18 +1,24 @@
 const log = console.log,
   childProcess = require('child_process');
 global.notificationAttendanceServiceChannel = null;
+global.notificationAttendanceServiceInfo = null;
 
 async function startService(_, res) {
   if (!global.notificationAttendanceServiceChannel) {
     let notificationAttendanceServiceChannel = childProcess.fork(
       './notificationAttendanceService.js'
     );
+    // Create listener for all communication of child process at here
+    // Only response.send to HTTP Client with /startService
+    // Other receiving message only assign to global notificationAttendanceServiceInfo
+    // So other handler must use await to catch global notificationAttendanceServiceInfo data
     notificationAttendanceServiceChannel.on('message', async (message) => {
-      //log('startService, Server got msg:', message);
-      if (message.startServiceInfo)
-        res.send({
-          ...message,
-        });
+      log('startService, Server got msg:', message);
+      if (message.startServiceInfo) {
+        global.notificationAttendanceServiceInfo = message.startServiceInfo;
+        res.send(global.notificationAttendanceServiceInfo);
+      } else if (message.getInfos)
+        global.notificationAttendanceServiceInfo = message.getInfos;
     });
     notificationAttendanceServiceChannel.send({
       statement: 'start',
@@ -43,19 +49,14 @@ function stopService(req, res) {
 
 async function getInfos(_, res) {
   if (global.notificationAttendanceServiceChannel) {
-    global.notificationAttendanceServiceChannel.on(
-      'message',
-      async (message) => {
-        //log('getInfos, Server got msg:', message);
-        if (message.getInfos)
-          res.send({
-            ...message,
-          });
-      }
-    );
+    // send statement to child process
     global.notificationAttendanceServiceChannel.send({
       statement: 'getInfos',
     });
+    // await data will be sent from child process through global.notificationAttendanceServiceInfo
+    await new Promise((r) => setTimeout(r, 2000));
+    log(global.notificationAttendanceServiceInfo);
+    res.send(global.notificationAttendanceServiceInfo);
   } else
     res.send({
       msg: 'Service already has not started yet',
