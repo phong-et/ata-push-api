@@ -16,8 +16,16 @@ let serviceStatus = 'initial',
   getJobNotifyCheckinCount = () => jobNotifyCheckinCount,
   getJobNotifyCheckoutCount = () => jobNotifyCheckoutCount,
   getNotifyTime = () => notifyTime,
-  getErrorMessage = () => errorMessage;
-
+  getErrorMessage = () => errorMessage,
+  serviceInfos = () => {
+    return {
+      getServiceStatus,
+      getJobNotifyCheckinCount,
+      getJobNotifyCheckoutCount,
+      getNotifyTime,
+      getErrorMessage,
+    };
+  };
 function notify(type) {
   let url = hostPushAPI + '/subscription/notify-all',
     options = {
@@ -75,8 +83,6 @@ async function run() {
         notifyCheckinTimeGMT = startTime.toGMTString(),
         notifyCheckinTimeLocaleDate =
           startTime.toLocaleDateString() + ' ' + startTime.toLocaleTimeString();
-      //notifyTime['notifyCheckinTime'] = notifyCheckinTime;
-      //log(notifyCheckinTime);
       let jobNotifyCheckin = new cron.CronJob({
         cronTime: `00 ${notifyCheckinTime} * * 0-6`,
         onTick: function () {
@@ -95,8 +101,6 @@ async function run() {
         notifyCheckoutTimeGMT = endTime.toGMTString(),
         notifyCheckoutTimeLocaleDate =
           endTime.toLocaleDateString() + ' ' + endTime.toLocaleTimeString();
-      //notifyTime['notifyCheckoutTime'] = notifyCheckoutTime;
-      //log(notifyCheckoutTime);
       let jobNotifyCheckout = new cron.CronJob({
         cronTime: `00 ${notifyCheckoutTime} * * 0-6`,
         onTick: function () {
@@ -109,8 +113,16 @@ async function run() {
       });
       serviceStatus = 'running';
       notifyTime = {
+        // checkin
         notifyCheckInTime: notifyCheckinTime,
+        notifyCheckinTimeISO: notifyCheckinTimeISO,
+        notifyCheckinTimeGMT: notifyCheckinTimeGMT,
+        notifyCheckinTimeLocaleDate: notifyCheckinTimeLocaleDate,
+        // checkout
         notifyCheckOutTime: notifyCheckoutTime,
+        notifyCheckoutTimeISO: notifyCheckoutTimeISO,
+        notifyCheckoutTimeGMT: notifyCheckoutTimeGMT,
+        notifyCheckoutTimeLocaleDate: notifyCheckoutTimeLocaleDate,
       };
       jobNotifyCheckin.start();
       jobNotifyCheckout.start();
@@ -127,33 +139,5 @@ async function run() {
     return { success: false, message: error.message };
   }
 }
-
+module.exports = { run, serviceInfos };
 (() => log(`> ${serviceName} service was injected`))();
-process.on('message', async (message) => {
-  log('%s service got message: %s', serviceName, message);
-  switch (message.statement) {
-    case 'start':
-      let result = await run();
-      process.send({
-        startServiceInfo: { ...result },
-      });
-      break;
-    case 'getInfos':
-      // => https://nodejs.org/api/process.html#process_process_send_message_sendhandle_options_callback
-      // => The resulting message might not be the same as what is originally sent.
-      process.send({
-        getInfos: {
-          serviceStatus: getServiceStatus(),
-          jobNotifyCheckinCount: getJobNotifyCheckinCount(),
-          jobNotifyCheckoutCount: getJobNotifyCheckoutCount(),
-          notifyTime: getNotifyTime(),
-          errorMessage: getErrorMessage(),
-        },
-      });
-      break;
-    default:
-      log(message);
-      break;
-  }
-});
-//process.send({ service: 'attendence', statement: 'initial' });

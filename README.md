@@ -74,3 +74,10 @@ npm start
   - Stop app 1st
   - Npm install modules (keep development mode)
   - Start again
+
+## Knownledge
+
+- Multi thread, multi process (only local and heroku)
+  - childProcess.fork
+- Single thread(for tinohost, cheap hosting, limited system resource)
+  - Inject to main thread use require(...) and module is oop
