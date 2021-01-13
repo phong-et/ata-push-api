@@ -5,16 +5,7 @@ const env = process.env.NODE_ENV || 'development',
   crypto = require('crypto'),
   fetch = require('node-fetch');
 
-let subscriptions = {};
-fetchAllSubscriptionsFromDb().then((response) => {
-  if (response.success) {
-    response.subscriptions.forEach((subscription) => {
-      subscriptions[subscription.subscriptionHashId] = JSON.parse(
-        subscription.subscriptionJSON
-      );
-    });
-  }
-});
+global.subscriptions = {};
 const vapidKeys = {
   privateKey: 'bdSiNzUhUP6piAxLH-tW88zfBlWWveIx0dAsDO66aVU',
   publicKey:
@@ -27,16 +18,15 @@ webpush.setVapidDetails(
   vapidKeys.privateKey
 );
 
-async function fetchAllSubscriptionsFromDb() {
+async function fetchAllSubscriptionsFromDb(cfg) {
   let options = {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + config.tokenAtaCoreForPushServiceUserRole,
+      Authorization: 'Bearer ' + cfg.tokenAtaCoreForPushServiceUserRole,
     },
   };
-  let url = config.hostAta + '/api/RecordAttendance/subscription/list';
-
+  let url = cfg.hostAta + '/api/admin/AttendanceNotificationService/subscription/list';
   return await fetch(url, options)
     .then(async (response) => {
       log(`${response.url}: ${response.status}(${response.statusText})`);
@@ -44,11 +34,11 @@ async function fetchAllSubscriptionsFromDb() {
       switch (response.status) {
         case 401:
           return {
-            success: true,
+            success: false,
             message: ' Access token is missing or invalid',
           };
         case 500:
-          return { success: true, message: response.statusText + message };
+          return { success: false, message: response.statusText + message };
         case 200:
           let subscriptions = await response.json();
           return { success: true, subscriptions: subscriptions };
@@ -74,14 +64,14 @@ function createHash(input) {
 function handlePushNotificationSubscription(req, res) {
   const subscriptionRequest = req.body;
   const susbscriptionId = createHash(JSON.stringify(subscriptionRequest));
-  subscriptions[susbscriptionId] = subscriptionRequest;
+  global.subscriptions[susbscriptionId] = subscriptionRequest;
   res.status(201).json({ id: susbscriptionId });
 }
 
 function sendPushNotification(req, res) {
-  log(subscriptions);
+  log(global.subscriptions);
   const subscriptionId = req.params.id;
-  const pushSubscription = subscriptions[subscriptionId];
+  const pushSubscription = global.subscriptions[subscriptionId];
   webpush
     .sendNotification(
       pushSubscription,
@@ -126,15 +116,15 @@ async function sendPushNotificationToAll(req, res) {
       url: req.body['url'],
     };
     let notifiedSubscriptions = { success: [], failed: [] };
-    if (Object.keys(subscriptions).length === 0)
+    if (Object.keys(global.subscriptions).length === 0)
       res.status(200).json({
         status: false,
         message: "Hasn't any subscription",
       });
     else {
-      for (let subscriptionId in subscriptions) {
+      for (let subscriptionId in global.subscriptions) {
         let success = await sendPushNotificationToOne(
-          subscriptions[subscriptionId],
+          global.subscriptions[subscriptionId],
           notificationData
         );
         if (success) notifiedSubscriptions.success.push(subscriptionId);
@@ -151,31 +141,32 @@ async function sendPushNotificationToAll(req, res) {
   }
 }
 
-function listSubscription(_, res) {
+function ListSubscriptions(_, res) {
   res.send(
     JSON.stringify(
       {
-        subscriptionCount: Object.keys(subscriptions).length,
-        subscriptions: subscriptions,
+        subscriptionCount: Object.keys(global.subscriptions).length,
+        subscriptions: global.subscriptions,
       },
       null,
       4
     )
   );
 }
-async function listSubscriptionFromDb(req, res) {
-  res.send(await fetchAllSubscriptionsFromDb());
+async function ListSubscriptionsFromDb(req, res) {
+  res.send(await fetchAllSubscriptionsFromDb(config));
 }
 
 function isExistedSubscriptionId(req, res) {
-  res.send({ isExisted: subscriptions[req.params.id] ? true : false });
+  res.send({ isExisted: global.subscriptions[req.params.id] ? true : false });
 }
 
 module.exports = {
   handlePushNotificationSubscription,
   sendPushNotification,
   sendPushNotificationToAll,
-  listSubscription,
-  listSubscriptionFromDb,
+  ListSubscriptions,
+  ListSubscriptionsFromDb,
   isExistedSubscriptionId,
+  fetchAllSubscriptionsFromDb,
 };

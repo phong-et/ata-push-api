@@ -84,3 +84,33 @@ function onListening() {
   var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+/**
+ * load latest subscriptions
+ */
+let env = process.env.NODE_ENV || 'development',
+  config = require('./config.json')[env];
+require('./handlers/subscriptionHandler')
+  .fetchAllSubscriptionsFromDb(config)
+  .then((response) => {
+    if (response.success) {
+      response.subscriptions.forEach((subscription) => {
+        global.subscriptions[subscription.subscriptionHashId] = JSON.parse(
+          subscription.subscriptionJSON
+        );
+      });
+      console.log('loaded latest subscriptions');
+    }
+  });
+
+/**
+ * start attendance service auto
+ */
+global.attendanceNotificationService = require('./attendanceNotificationService');
+global.attendanceNotificationService.run().then(() =>
+  global.attendanceNotificationService.sendInfo({
+    log: console.log,
+    service: global.attendanceNotificationService,
+    success: true,
+  })
+);

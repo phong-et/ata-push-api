@@ -8,7 +8,7 @@ router.get('/', function (req, res, next) {
 router.post('/create', subscriptionHandler.handlePushNotificationSubscription);
 router.get('/notify/:id', subscriptionHandler.sendPushNotification);
 router.post('/notify-all', subscriptionHandler.sendPushNotificationToAll);
-router.get('/list', subscriptionHandler.listSubscription);
-router.get('/list/db', subscriptionHandler.listSubscriptionFromDb);
+router.get('/list', subscriptionHandler.ListSubscriptions);
+router.get('/list/db', subscriptionHandler.ListSubscriptionsFromDb);
 router.get('/check/:id', subscriptionHandler.isExistedSubscriptionId);
 module.exports = router;

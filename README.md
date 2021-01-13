@@ -79,5 +79,5 @@ npm start
 
 - Multi thread, multi process (only local and heroku)
   - childProcess.fork
-- Single thread(for tinohost, cheap hosting, limited system resource)
+- Single thread(for tinohost, cheap hosting, limitted system resource)
   - Inject to main thread use require(...) and module is oop

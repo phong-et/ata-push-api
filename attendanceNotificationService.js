@@ -11,13 +11,13 @@ let serviceStatus = 'initial',
   jobNotifyCheckinCount = 0,
   jobNotifyCheckoutCount = 0,
   notifyTime = {},
-  errorMessage = '',
+  errorMessage = null,
   getServiceStatus = () => serviceStatus,
   getJobNotifyCheckinCount = () => jobNotifyCheckinCount,
   getJobNotifyCheckoutCount = () => jobNotifyCheckoutCount,
   getNotifyTime = () => notifyTime,
   getErrorMessage = () => errorMessage,
-  serviceInfos = () => {
+  getInfos = () => {
     return {
       getServiceStatus,
       getJobNotifyCheckinCount,
@@ -82,7 +82,9 @@ async function run() {
         notifyCheckinTimeISO = officeSettings.startTime,
         notifyCheckinTimeGMT = startTime.toGMTString(),
         notifyCheckinTimeLocaleDate =
-          startTime.toLocaleDateString() + ' ' + startTime.toLocaleTimeString();
+          startTime.toLocaleDateString() +
+          ', ' +
+          startTime.toLocaleTimeString();
       let jobNotifyCheckin = new cron.CronJob({
         cronTime: `00 ${notifyCheckinTime} * * 0-6`,
         onTick: function () {
@@ -100,7 +102,7 @@ async function run() {
         notifyCheckoutTimeISO = officeSettings.endTime,
         notifyCheckoutTimeGMT = endTime.toGMTString(),
         notifyCheckoutTimeLocaleDate =
-          endTime.toLocaleDateString() + ' ' + endTime.toLocaleTimeString();
+          endTime.toLocaleDateString() + ', ' + endTime.toLocaleTimeString();
       let jobNotifyCheckout = new cron.CronJob({
         cronTime: `00 ${notifyCheckoutTime} * * 0-6`,
         onTick: function () {
@@ -139,5 +141,26 @@ async function run() {
     return { success: false, message: error.message };
   }
 }
-module.exports = { run, serviceInfos };
+function sendInfo({ log, res, service, message, success }) {
+  try {
+    let infos = service.getInfos();
+    let notifyTime = infos.getNotifyTime();
+    let info = {
+      Success: success,
+      ServiceStatus: infos.getServiceStatus(),
+      JobNotifyCheckinCount: infos.getJobNotifyCheckinCount(),
+      JobNotifyCheckoutCount: infos.getJobNotifyCheckoutCount(),
+      NotifyCheckinTime: notifyTime.notifyCheckinTimeLocaleDate.split(', ')[1],
+      NotifyCheckoutTime: notifyTime.notifyCheckoutTimeLocaleDate.split(
+        ', '
+      )[1],
+      message: infos.getErrorMessage() || message || '',
+    };
+    if (log) log(info);
+    if (res) res.send(info);
+  } catch (error) {
+    res.send(error);
+  }
+}
+module.exports = { run, getInfos, sendInfo };
 (() => log(`> ${serviceName} service was injected`))();

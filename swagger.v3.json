@@ -140,7 +140,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ListSubscription"
+                  "$ref": "#/components/schemas/ListSubscriptions"
                 }
               }
             }
@@ -309,7 +309,7 @@
         },
         "example": ["a", "b", "c"]
       },
-      "ListSubscription": {
+      "ListSubscriptions": {
         "required": ["success"],
         "properties": {
           "success": {

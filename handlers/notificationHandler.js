@@ -1,48 +1,61 @@
 global.attendanceNotificationService = null;
 async function startService(_, res) {
-  if (!global.attendanceNotificationService) {
-    global.attendanceNotificationService = require('../attendanceNotificationService');
-    global.attendanceNotificationService.run().then(() => {
-      let infos = global.attendanceNotificationService.serviceInfos();
-      res.send({
-        serviceStatus: infos.getServiceStatus(),
-        jobNotifyCheckinCount: infos.getJobNotifyCheckinCount(),
-        jobNotifyCheckoutCount: infos.getJobNotifyCheckoutCount(),
-        notifyTime: infos.getNotifyTime(),
-        errorMessage: infos.getErrorMessage(),
+  try {
+    if (global.attendanceNotificationService === null) {
+      global.attendanceNotificationService = require('../attendanceNotificationService');
+      global.attendanceNotificationService.run().then(() =>
+        global.attendanceNotificationService.sendInfo({
+          res: res,
+          log: console.log,
+          service: global.attendanceNotificationService,
+          success: true,
+        })
+      );
+    }
+    else
+      global.attendanceNotificationService.sendInfo({
+        res: res,
+        log: console.log,
+        service: global.attendanceNotificationService,
+        message: 'Service has already been started',
+        success: true,
       });
-    });
-  } else
+  } catch (error) {
     res.send({
-      msg: 'Service has already been started',
+      success: false,
+      message: error.message,
     });
+  }
 }
 
 function stopService(req, res) {
   if (global.attendanceNotificationService) {
     global.attendanceNotificationService = null;
     res.send({
-      msg: 'Service has already been stopped',
+      success: true,
+      message: 'Service has already been stopped',
     });
   } else
     res.send({
-      msg: 'Service has never been started',
+      success: false,
+      message: 'Service has never been started',
     });
 }
 
 async function getInfos(_, res) {
   if (global.attendanceNotificationService) {
-    let infos = global.attendanceNotificationService.serviceInfos();
-    res.send({
-      serviceStatus: infos.getServiceStatus(),
-      jobNotifyCheckinCount: infos.getJobNotifyCheckinCount(),
-      jobNotifyCheckoutCount: infos.getJobNotifyCheckoutCount(),
-      notifyTime: infos.getNotifyTime(),
-      errorMessage: infos.getErrorMessage(),
-    });
+    global.attendanceNotificationService = require('../attendanceNotificationService');
+    global.attendanceNotificationService.run().then(() =>
+      global.attendanceNotificationService.sendInfo({
+        res: res,
+        log: console.log,
+        service: global.attendanceNotificationService,
+      })
+    );
   } else
     res.send({
-      msg: 'Service has never been started',
+      success: false,
+      message: 'Service has never been started',
     });
 }
 
