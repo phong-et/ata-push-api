@@ -158,7 +158,8 @@ function sendInfo({ log, res, service, message, success }) {
     if (log) log(info);
     if (res) res.send(info);
   } catch (error) {
-    res.send(error);
+    if(res) res.send(error);
+    console.log(error)
   }
 }
 module.exports = { run, getInfos, sendInfo };
