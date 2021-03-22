@@ -6,9 +6,11 @@ router.get('/', function (req, res, next) {
 });
 
 router.post('/create', subscriptionHandler.handlePushNotificationSubscription);
-router.get('/notify/:id', subscriptionHandler.sendPushNotification);
-router.post('/notify-all', subscriptionHandler.sendPushNotificationToAll);
-router.get('/list', subscriptionHandler.ListSubscriptions);
-router.get('/list/db', subscriptionHandler.ListSubscriptionsFromDb);
+router.post('/notify/:id', subscriptionHandler.pushSubscription);
+router.post('/notify/', subscriptionHandler.pushSubscriptions);
+router.post('/notify-all', subscriptionHandler.pushAllSubscriptions);
+router.get('/list', subscriptionHandler.listSubscriptions);
+router.get('/list/db', subscriptionHandler.listSubscriptionsFromDb);
 router.get('/check/:id', subscriptionHandler.isExistedSubscriptionId);
 module.exports = router;
+ 

@@ -85,27 +85,10 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
-/**
- * load latest subscriptions
- */
-let env = process.env.NODE_ENV || 'development',
-  config = require('./config.json')[env];
-require('./handlers/subscriptionHandler')
-  .fetchAllSubscriptionsFromDb(config)
-  .then((response) => {
-    if (response.success) {
-      response.subscriptions.forEach((subscription) => {
-        global.subscriptions[subscription.subscriptionHashId] = JSON.parse(
-          subscription.subscriptionJSON
-        );
-      });
-      console.log('loaded latest subscriptions');
-    }
-  });
+// load latest subscriptions
+require('./handlers/notificationHandler').syncSubscriptions()
 
-/**
- * start attendance service auto
- */
+// start attendance service auto
 global.attendanceNotificationService = require('./attendanceNotificationService');
 global.attendanceNotificationService.run().then(() =>
   global.attendanceNotificationService.sendInfo({

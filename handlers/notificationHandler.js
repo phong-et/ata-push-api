@@ -1,15 +1,35 @@
 global.attendanceNotificationService = null;
+let env = process.env.NODE_ENV || 'development',
+  config = require('../config.json')[env],
+  fetchAllSubscriptionsFromDb = require('../handlers/subscriptionHandler')
+    .fetchAllSubscriptionsFromDb;
+
+function syncSubscriptions() {
+  fetchAllSubscriptionsFromDb(config)
+    .then((response) => {
+      if (response.success) {
+        response.subscriptions.forEach((subscription) => {
+          global.subscriptions[subscription.subscriptionHashId] = JSON.parse(
+            subscription.subscriptionJSON
+          );
+        });
+        console.log('loaded latest subscriptions');
+      }
+    });
+}
 async function startService(_, res) {
   try {
     if (global.attendanceNotificationService === null) {
       global.attendanceNotificationService = require('../attendanceNotificationService');
-      global.attendanceNotificationService.run().then(() =>
+      global.attendanceNotificationService.run().then(() => {
         global.attendanceNotificationService.sendInfo({
           res: res,
           log: console.log,
           service: global.attendanceNotificationService,
           success: true,
         })
+        syncSubscriptions()
+      }
       );
     }
     else
@@ -45,13 +65,14 @@ function stopService(req, res) {
 async function getInfos(_, res) {
   if (global.attendanceNotificationService) {
     global.attendanceNotificationService = require('../attendanceNotificationService');
-    global.attendanceNotificationService.run().then(() =>
+    global.attendanceNotificationService.run().then(() => {
       global.attendanceNotificationService.sendInfo({
         res: res,
         log: console.log,
         service: global.attendanceNotificationService,
       })
-    );
+      syncSubscriptions()
+    });
   } else
     res.send({
       success: false,
@@ -60,6 +81,7 @@ async function getInfos(_, res) {
 }
 
 module.exports = {
+  syncSubscriptions,
   startService,
   stopService,
   getInfos,

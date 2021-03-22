@@ -6,7 +6,6 @@ const cron = require('cron'),
   hostPushAPI = config.hostPushAPI,
   hostAta = config.hostAta,
   serviceName = 'Notification Attendance';
-
 let serviceStatus = 'initial',
   jobNotifyCheckinCount = 0,
   jobNotifyCheckoutCount = 0,
@@ -146,12 +145,12 @@ function sendInfo({ log, res, service, message, success }) {
     let infos = service.getInfos();
     let notifyTime = infos.getNotifyTime();
     let info = {
-      Success: success,
-      ServiceStatus: infos.getServiceStatus(),
-      JobNotifyCheckinCount: infos.getJobNotifyCheckinCount(),
-      JobNotifyCheckoutCount: infos.getJobNotifyCheckoutCount(),
-      NotifyCheckinTime: notifyTime.notifyCheckinTimeLocaleDate.split(', ')[1],
-      NotifyCheckoutTime: notifyTime.notifyCheckoutTimeLocaleDate.split(
+      success: success,
+      serviceStatus: infos.getServiceStatus(),
+      jobNotifyCheckinCount: infos.getJobNotifyCheckinCount(),
+      jobNotifyCheckoutCount: infos.getJobNotifyCheckoutCount(),
+      notifyCheckinTime: notifyTime.notifyCheckinTimeLocaleDate.split(', ')[1],
+      notifyCheckoutTime: notifyTime.notifyCheckoutTimeLocaleDate.split(
         ', '
       )[1],
       message: infos.getErrorMessage() || message || '',

@@ -26,7 +26,8 @@ async function fetchAllSubscriptionsFromDb(cfg) {
       Authorization: 'Bearer ' + cfg.tokenAtaCoreForPushServiceUserRole,
     },
   };
-  let url = cfg.hostAta + '/api/admin/AttendanceNotificationService/subscription/list';
+  let url =
+    cfg.hostAta + '/api/admin/AttendanceNotificationService/subscription/list';
   return await fetch(url, options)
     .then(async (response) => {
       log(`${response.url}: ${response.status}(${response.statusText})`);
@@ -68,32 +69,33 @@ function handlePushNotificationSubscription(req, res) {
   res.status(201).json({ id: susbscriptionId });
 }
 
-function sendPushNotification(req, res) {
-  log(global.subscriptions);
-  const subscriptionId = req.params.id;
+async function pushSubscription(req, res) {
+  const subscriptionId = req.params.id.trim();
   const pushSubscription = global.subscriptions[subscriptionId];
-  webpush
+  let success = true,
+    message = '';
+  await webpush
     .sendNotification(
       pushSubscription,
       JSON.stringify({
-        title: 'HAVE YOU CHECKED IN YET ?',
-        text: 'Please click here go to checkin page',
-        image: '/media/error/bg1.jpg',
-        tag: 'check-in notification',
-        url: '/record-attendance',
+        title: req.body['title'] || 'TESTING TITLE ?',
+        text: req.body['text'] || 'Testing body',
+        image: config.backgroundPopupNotification,
+        url: req.body['url'] || '/testing',
       })
     )
     .catch((err) => {
+      success = false;
+      message = err.body;
       log(err);
     });
-  res.status(202).json({});
+  res.send({ success, message });
 }
-async function sendPushNotificationToOne(subscription, notificationData) {
+async function sendNotification(subscription, notificationData) {
   notificationData = {
     title: notificationData.title || 'HAVE YOU JOINED ATTENDANCE YET ?',
     text: notificationData.text || 'Please click here go to attendance page',
-    image: notificationData.image || '/media/error/bg1.jpg',
-    tag: notificationData.tag || 'Attendance notification',
+    image: config.backgroundPopupNotification,
     url: notificationData.url || '/record-attendance',
   };
   let success = true;
@@ -105,7 +107,43 @@ async function sendPushNotificationToOne(subscription, notificationData) {
     });
   return success;
 }
-async function sendPushNotificationToAll(req, res) {
+async function pushSubscriptions(req, res) {
+  try {
+    log('notify all subscriptions');
+    let notificationData = {
+      title: req.body['title'],
+      text: req.body['text'],
+      image: req.body['image'],
+      tag: req.body['tag'],
+      url: req.body['url'],
+    };
+    let notifiedSubscriptions = { success: [], failed: [] };
+    let subscriptionIds = req.params.ids;
+    if (Object.keys(global.subscriptions).length === 0)
+      res.status(200).json({
+        status: false,
+        message: "Hasn't any subscription",
+      });
+    else {
+      for (let subscriptionId of subscriptionIds) {
+        let success = await sendNotification(
+          global.subscriptions[subscriptionId],
+          notificationData
+        );
+        if (success) notifiedSubscriptions.success.push(subscriptionId);
+        else notifiedSubscriptions.failed.push(subscriptionId);
+      }
+      res.status(202).json({
+        status: true,
+        message: 'Notification statements were sent',
+        notifiedSubscriptions: notifiedSubscriptions,
+      });
+    }
+  } catch (error) {
+    res.status(202).json({ status: false, message: error.message });
+  }
+}
+async function pushAllSubscriptions(req, res) {
   try {
     log('notify all subscriptions');
     let notificationData = {
@@ -123,7 +161,7 @@ async function sendPushNotificationToAll(req, res) {
       });
     else {
       for (let subscriptionId in global.subscriptions) {
-        let success = await sendPushNotificationToOne(
+        let success = await sendNotification(
           global.subscriptions[subscriptionId],
           notificationData
         );
@@ -141,7 +179,7 @@ async function sendPushNotificationToAll(req, res) {
   }
 }
 
-function ListSubscriptions(_, res) {
+function listSubscriptions(_, res) {
   res.send(
     JSON.stringify(
       {
@@ -153,7 +191,7 @@ function ListSubscriptions(_, res) {
     )
   );
 }
-async function ListSubscriptionsFromDb(req, res) {
+async function listSubscriptionsFromDb(req, res) {
   res.send(await fetchAllSubscriptionsFromDb(config));
 }
 
@@ -163,10 +201,11 @@ function isExistedSubscriptionId(req, res) {
 
 module.exports = {
   handlePushNotificationSubscription,
-  sendPushNotification,
-  sendPushNotificationToAll,
-  ListSubscriptions,
-  ListSubscriptionsFromDb,
+  pushSubscription,
+  pushSubscriptions,
+  pushAllSubscriptions,
+  listSubscriptions,
+  listSubscriptionsFromDb,
   isExistedSubscriptionId,
   fetchAllSubscriptionsFromDb,
 };

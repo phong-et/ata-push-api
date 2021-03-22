@@ -4,20 +4,23 @@
     "hostPushAPI": "http://localhost:8888",
     "hostAta": "http://localhost:5000",
     "tokenAtaCoreForPushServiceUserRole": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJhZG1pbiIsInJvbGUiOiJBZG1pbiIsIm5iZiI6MTYwODYyMTc0NSwiZXhwIjoxNjQwMTU3NzQ1LCJpYXQiOjE2MDg2MjE3NDV9.S6zbwxPpPub59ooZr-AyActMtPPD6gt6pEJpVwp3TTAWd9Z4bfbthjUCxOONUCXKUd1Tb4eGpTfOUvf-so4cdg",
-    "tokenAtaPushAPI":"U2FsdGVkX18M4woUDsH8qj0w0V8qT1RQTUSYa062cKHrGezI1+kXez1YrnnjMEPh"
+    "tokenAtaPushAPI":"U2FsdGVkX18M4woUDsH8qj0w0V8qT1RQTUSYa062cKHrGezI1+kXez1YrnnjMEPh",
+    "backgroundPopupNotification":"/media/error/bg1.jpg"
   },
   "production": {
     "keyPushAPIToken":"To(.)(.)ken",
     "hostPushAPI": "https://ata-push-api.xyz",
     "hostAta": "https://atacore.azurewebsites.net",
     "tokenAtaCoreForPushServiceUserRole": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJhZG1pbiIsInJvbGUiOiJBZG1pbiIsIm5iZiI6MTYwODYyMTc0NSwiZXhwIjoxNjQwMTU3NzQ1LCJpYXQiOjE2MDg2MjE3NDV9.S6zbwxPpPub59ooZr-AyActMtPPD6gt6pEJpVwp3TTAWd9Z4bfbthjUCxOONUCXKUd1Tb4eGpTfOUvf-so4cdg",
-    "tokenAtaPushAPI":"U2FsdGVkX18M4woUDsH8qj0w0V8qT1RQTUSYa062cKHrGezI1+kXez1YrnnjMEPh"
+    "tokenAtaPushAPI":"U2FsdGVkX18M4woUDsH8qj0w0V8qT1RQTUSYa062cKHrGezI1+kXez1YrnnjMEPh",
+    "backgroundPopupNotification":"/media/error/bg1.jpg"
   },
   "test": {
     "keyPushAPIToken":"To(.)(.)ken",
     "hostPushAPI": "https://ata-push-api.herokuapp.com",
     "hostAta": "http://localhost:5000",
     "tokenAtaCoreForPushServiceUserRole": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJhZG1pbiIsInJvbGUiOiJBZG1pbiIsIm5iZiI6MTYwODYyMTc0NSwiZXhwIjoxNjQwMTU3NzQ1LCJpYXQiOjE2MDg2MjE3NDV9.S6zbwxPpPub59ooZr-AyActMtPPD6gt6pEJpVwp3TTAWd9Z4bfbthjUCxOONUCXKUd1Tb4eGpTfOUvf-so4cdg",
-    "tokenAtaPushAPI":"U2FsdGVkX18M4woUDsH8qj0w0V8qT1RQTUSYa062cKHrGezI1+kXez1YrnnjMEPh"
+    "tokenAtaPushAPI":"U2FsdGVkX18M4woUDsH8qj0w0V8qT1RQTUSYa062cKHrGezI1+kXez1YrnnjMEPh",
+    "backgroundPopupNotification":"/media/error/bg1.jpg"
   }
 }
