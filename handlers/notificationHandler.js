@@ -1,5 +1,5 @@
 global.attendanceNotificationService = null;
-let env = process.env.NODE_ENV || 'development',
+let env = process.env.NODE_ENV || 'production',
   config = require('../config.json')[env],
   fetchAllSubscriptionsFromDb = require('../handlers/subscriptionHandler')
     .fetchAllSubscriptionsFromDb;

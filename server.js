@@ -86,7 +86,7 @@ function onListening() {
 }
 
 // load latest subscriptions
-require('./handlers/notificationHandler').syncSubscriptions()
+//require('./handlers/notificationHandler').syncSubscriptions()
 
 // start attendance service auto
 global.attendanceNotificationService = require('./attendanceNotificationService');
