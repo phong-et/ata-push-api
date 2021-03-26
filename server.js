@@ -86,15 +86,15 @@ function onListening() {
 }
 
 // load latest subscriptions
-//require('./handlers/notificationHandler').syncSubscriptions()
+require('./handlers/notificationHandler').syncSubscriptions()
 
 // start attendance service auto
-// global.attendanceNotificationService = require('./attendanceNotificationService');
-// global.attendanceNotificationService.run().then(() => {
-//   if (global.attendanceNotificationService)
-//     global.attendanceNotificationService.sendInfo({
-//       log: console.log,
-//       service: global.attendanceNotificationService,
-//       success: true,
-//     })
-// });
+global.attendanceNotificationService = require('./attendanceNotificationService');
+global.attendanceNotificationService.run().then(() => {
+  if (global.attendanceNotificationService)
+    global.attendanceNotificationService.sendInfo({
+      log: console.log,
+      service: global.attendanceNotificationService,
+      success: true,
+    })
+});

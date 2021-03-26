@@ -8,6 +8,7 @@ function syncSubscriptions() {
   fetchAllSubscriptionsFromDb(config)
     .then((response) => {
       if (response.success) {
+        global.subscriptions = {}
         response.subscriptions.forEach((subscription) => {
           global.subscriptions[subscription.subscriptionHashId] = JSON.parse(
             subscription.subscriptionJSON
@@ -22,13 +23,13 @@ async function startService(_, res) {
     if (global.attendanceNotificationService === null) {
       global.attendanceNotificationService = require('../attendanceNotificationService');
       global.attendanceNotificationService.run().then(() => {
+        syncSubscriptions()
         global.attendanceNotificationService.sendInfo({
           res: res,
           log: console.log,
           service: global.attendanceNotificationService,
           success: true,
         })
-        syncSubscriptions()
       }
       );
     }
@@ -66,12 +67,13 @@ async function getInfos(_, res) {
   if (global.attendanceNotificationService) {
     global.attendanceNotificationService = require('../attendanceNotificationService');
     global.attendanceNotificationService.run().then(() => {
+      syncSubscriptions()
       global.attendanceNotificationService.sendInfo({
         res: res,
         log: console.log,
         service: global.attendanceNotificationService,
       })
-      syncSubscriptions()
+      
     });
   } else
     res.send({
