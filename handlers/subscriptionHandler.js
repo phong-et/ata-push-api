@@ -199,6 +199,11 @@ function isExistedSubscriptionId(req, res) {
   res.send({ isExisted: global.subscriptions[req.params.id] ? true : false });
 }
 
+function clearSubscriptions(req, res) {
+  global.subscriptions = {}
+  res.send({ subscriptions: global.subscriptions });
+}
+
 module.exports = {
   handlePushNotificationSubscription,
   pushSubscription,
@@ -208,4 +213,5 @@ module.exports = {
   listSubscriptionsFromDb,
   isExistedSubscriptionId,
   fetchAllSubscriptionsFromDb,
+  clearSubscriptions,
 };
