@@ -4,19 +4,26 @@ let env = process.env.NODE_ENV || 'development',
   fetchAllSubscriptionsFromDb = require('../handlers/subscriptionHandler')
     .fetchAllSubscriptionsFromDb;
 
-function syncSubscriptions() {
-  fetchAllSubscriptionsFromDb(config)
-    .then((response) => {
-      if (response.success) {
-        global.subscriptions = {}
-        response.subscriptions.forEach((subscription) => {
-          global.subscriptions[subscription.subscriptionHashId] = JSON.parse(
-            subscription.subscriptionJSON
-          );
-        });
-        console.log('loaded latest subscriptions');
-      }
-    });
+function syncSubscriptions(req, res) {
+  try {
+    fetchAllSubscriptionsFromDb(config)
+      .then((response) => {
+        if (response.success) {
+          global.subscriptions = {}
+          response.subscriptions.forEach((subscription) => {
+            global.subscriptions[subscription.subscriptionHashId] = JSON.parse(
+              subscription.subscriptionJSON
+            );
+          });
+          console.log('loaded latest subscriptions');
+          if (res) res.send({ success: true, subscriptions: global.subscriptions })
+        }
+      });
+  } catch (error) {
+    console.log(error);
+    if (res) res.send({ success: false, message: error })
+  }
+
 }
 async function startService(_, res) {
   try {
@@ -73,7 +80,7 @@ async function getInfos(_, res) {
         log: console.log,
         service: global.attendanceNotificationService,
       })
-      
+
     });
   } else
     res.send({

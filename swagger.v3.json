@@ -154,6 +154,52 @@
         }
       }
     },
+    "/subscription/clear": {
+      "put": {
+        "tags": ["Subscription"],
+        "summary": "Clear all global.subscriptions",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListSubscriptions"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/subscription/sync": {
+      "patch": {
+        "tags": ["Subscription"],
+        "summary": "Sync global.subscriptions with database",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListSubscriptions"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
     "/subscription/check/{id}": {
       "get": {
         "tags": ["Subscription"],
