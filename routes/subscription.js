@@ -8,7 +8,7 @@ router.get('/', function (req, res, next) {
 
 router.post('/create', subscriptionHandler.handlePushNotificationSubscription);
 router.post('/notify/:id', subscriptionHandler.pushSubscription);
-router.post('/notify/', subscriptionHandler.pushSubscriptions);
+router.post('/notify', subscriptionHandler.pushSubscriptions);
 router.post('/notify-all', subscriptionHandler.pushAllSubscriptions);
 router.get('/list', subscriptionHandler.listSubscriptions);
 router.get('/list/db', subscriptionHandler.listSubscriptionsFromDb);

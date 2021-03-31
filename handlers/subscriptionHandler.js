@@ -86,7 +86,7 @@ async function pushSubscription(req, res) {
     )
     .catch((err) => {
       success = false;
-      message = err.body;
+      message = err.body || err.message;
       log(err);
     });
   res.send({ success, message });
@@ -109,7 +109,7 @@ async function sendNotification(subscription, notificationData) {
 }
 async function pushSubscriptions(req, res) {
   try {
-    log('notify all subscriptions');
+    log('notify some subscriptions');
     let notificationData = {
       title: req.body['title'],
       text: req.body['text'],
@@ -118,29 +118,30 @@ async function pushSubscriptions(req, res) {
       url: req.body['url'],
     };
     let notifiedSubscriptions = { success: [], failed: [] };
-    let subscriptionIds = req.params.ids;
+    let subscriptionHashIds = JSON.parse(req.body.subscriptionHashIds);
+    console.log(subscriptionHashIds)
     if (Object.keys(global.subscriptions).length === 0)
       res.status(200).json({
         status: false,
         message: "Hasn't any subscription",
       });
     else {
-      for (let subscriptionId of subscriptionIds) {
+      for (let id of subscriptionHashIds) {
         let success = await sendNotification(
-          global.subscriptions[subscriptionId],
+          global.subscriptions[id],
           notificationData
         );
-        if (success) notifiedSubscriptions.success.push(subscriptionId);
-        else notifiedSubscriptions.failed.push(subscriptionId);
+        if (success) notifiedSubscriptions.success.push(id);
+        else notifiedSubscriptions.failed.push(id);
       }
       res.status(202).json({
-        status: true,
+        success: true,
         message: 'Notification statements were sent',
         notifiedSubscriptions: notifiedSubscriptions,
       });
     }
   } catch (error) {
-    res.status(202).json({ status: false, message: error.message });
+    res.status(202).json({ success: false, message: error.message });
   }
 }
 async function pushAllSubscriptions(req, res) {

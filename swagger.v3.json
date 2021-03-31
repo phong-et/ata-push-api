@@ -51,8 +51,7 @@
       }
     },
     "/subscription/notify/{id}": {
-      "get": {
-        "deprecated": true,
+      "post": {
         "tags": ["Subscription"],
         "summary": "Notify to a specific subscription",
         "description": "Send a notifiction statement to push api",
@@ -67,8 +66,47 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NotificationPopup"
+              }
+            }
+          }
+        },
         "responses": {
           "202": {
+            "description": "Notification statement was sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotificationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscription/notify": {
+      "post": {
+        "tags": ["Subscription"],
+        "summary": "Notify to some subscriptions endpoint",
+        "description": "Send a notification statement to push api",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PushSubscriptions"
+              }
+            }
+          },
+          "required": false,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
             "description": "Notification statement was sent",
             "content": {
               "application/json": {
@@ -334,17 +372,59 @@
           }
         }
       },
+      "PushSubscriptions": {
+        "properties": {
+          "subscriptionHashIds":{
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["a", "b", "c"]
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the notification that we want to push"
+          },
+          "text": {
+            "type": "string",
+            "description": "Content of the notification that we want to push"
+          },
+          "url": {
+            "type": "string",
+            "description": "Click to notificaition popup will open this url"
+          }
+        }
+      },
       "NotificationResponse": {
         "required": ["status"],
         "properties": {
-          "status": {
+          "success": {
             "type": "boolean"
           },
           "message": {
             "type": "string"
           },
           "notifiedSubscriptions": {
-            "type": "string"
+            "type": "object",
+              "$ref": "#/components/schemas/notifiedSubscriptions"
+          }
+        }
+      },
+      "notifiedSubscriptions": {
+        "properties": {
+          "success": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["a", "b", "c"]
+          },
+          "failed": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "example": ["a", "b", "c"]
           }
         }
       },
