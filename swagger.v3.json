@@ -89,7 +89,7 @@
         }
       }
     },
-    "/subscription/notify": {
+    "/subscription/notify-many": {
       "post": {
         "tags": ["Subscription"],
         "summary": "Notify to some subscriptions endpoint",
